@@ -1,4 +1,5 @@
 import logo from './logo.svg';
+import { useState } from 'react';
 import './App.css'
 import { Routes, Route , Link } from "react-router-dom"
 
@@ -30,7 +31,7 @@ import { useEffect } from 'react';
 
 function App() {
 
-  const [data, setData] = React.useState(""); 
+  const [data, setData] = useState(""); 
   useEffect(() => {
     fetch("/api/sample").then(res => res.json()).then(data => setData(data));
   }, []);
