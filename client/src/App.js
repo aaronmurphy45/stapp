@@ -30,7 +30,7 @@ import { useEffect } from 'react';
 
 function App() {
 
-  const [data, setData] = useState(""); 
+  const [data, setData] = React.useState(""); 
   useEffect(() => {
     fetch("/api/sample").then(res => res.json()).then(data => setData(data));
   }, []);
