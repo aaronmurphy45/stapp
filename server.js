@@ -11,7 +11,7 @@ if (process.env.PROD) {
     app.get('*', (req, res) => { //Line 6))
         res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
     });
-    
+
 }
 
 
@@ -23,7 +23,7 @@ const port = process.env.PORT || 5000; //Line 3
 app.listen(port, () => console.log(`Listening on port ${port}`)); //Line 6
 
 
-
+//heres
 // create a GET route
 //app.use(express.static("public"));
 
