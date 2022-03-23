@@ -7,7 +7,7 @@ const api = require('./api'); //Line 3
 app.use('/api', api); //Line 4
 
 if (process.env.PROD) {
-    app.use(express.static(path.join(__dirname + 'client/build')); //Line 5
+    app.use(express.static(path.join(__dirname + './client/build')); //Line 5
     app.get('*', (req, res) => { //Line 6))
         res.sendFile(path.join(__dirname + 'client/build/index.html'));
     });
