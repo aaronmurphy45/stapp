@@ -58,7 +58,7 @@ function App() {
   return (
     
     <div className="app">
-
+      <h1>{data}</h1>
       {user == null ? <div>
         <Routes >
           <Route exact path="/" element={<  Root />} />

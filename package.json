@@ -8,6 +8,12 @@
     "start": "PROD=true node server.js",
     "postinstall": "cd ./client && yarn"
   },
+  "dependencies": {
+    "express": "^4.16.4",
+    "dotenv": "^8.2.0",
+    "express-promise-router": "^4.0.0"
+   
+  },
   "author": "", 
   "license": "ISC"
 }
