@@ -6,6 +6,7 @@ import { Card, Row, Col, Input } from 'antd'
 import { useGetStockTimeSeriesQuery } from '../services/stockTimeSeriesAPI'
 import { useGetStocksTrendingQuery, useGetStockDataQuery,  useGetStockBusinessDetailsQuery, useGetStockInfoQuery, useGetStockSparkQuery } from '../services/yahooRecommmend'
 import { stockListApi } from '../services/stockListAPI'
+import { useGetStockQuoteQuery } from '../services/stockListAPI'
 import { CaretDownOutlined } from '@ant-design/icons'
 import { CaretUpOutlined } from '@ant-design/icons'
 import { blue } from '@material-ui/core/colors'
@@ -29,7 +30,7 @@ export default function MostPopular({simplified}) {
     const count = simplified ? 10: 100;
     const [country, setCountry] = React.useState("");
     const [exchange, setExchange] = React.useState("");
-    const [symbol, setSymbol] = React.useState("AAPL,EUR/USD,ETH/BTC,TSLA");
+    const [symbol, setSymbol] = React.useState("AAPL,EUR/USD,ETH/BTC,TSLA,FB,AMZN,ETH/USD");
     const [interval, setInterval] = React.useState("1min");
     const [region, setRegion] = React.useState("US");
     
@@ -40,6 +41,19 @@ export default function MostPopular({simplified}) {
     const [stockstring, setStockstring] = React.useState("");
     const [stockArrary, setStockArrary] = React.useState([]);
     const [stockData, setStockData] = React.useState([]);
+    var color = "grey"
+
+
+    const { data: stockList, isFetching } = useGetStockQuoteQuery(symbol);
+    
+
+    console.log(stockList);
+
+    if (stockList) {
+       var arrayObject = Object.values(stockList);
+       console.log(arrayObject);
+    }
+   
 
 
     /*
@@ -109,9 +123,7 @@ export default function MostPopular({simplified}) {
     const isFetching3 = false;
    
 
-    if (spark){
-        var arrayObject = Object.values(spark)
-    }
+
 
 
    
@@ -140,8 +152,16 @@ export default function MostPopular({simplified}) {
       
             
             <Row gutters = {[32,32]} className = "crypto-card-container">
-                {arrayObject?.map((stock)=> (
-                    <Col xs ={24} sm={12} lg={6} className ="crypto-card">
+
+                {arrayObject?.map((stock)=> {
+
+                    if (stock.changePercent > 0) {
+                        color = "green"
+                    } else {
+                        color = "red"
+                    }
+                    return (
+                    <Col xs ={24} sm={12} lg={6} className ="crypto-card" style = {{border : "1px solid" + color}}>
                         <Button onClick={()=> addFavourites(stock.symbol, uid)}>
                             <Icon path = {mdiCardsHeart}
                             size = {1}
@@ -156,15 +176,18 @@ export default function MostPopular({simplified}) {
                             >
                                 <p>
                                     Symbol: {(stock.symbol)} <br/>
-                                    Price : {(stock.close[stock.close.length-1])} <br/>
-
+                                    Previous Close: {(stock.close)} <br/>
+                                    Change: {(stock.change)} <br/>
+                                    Change Percent: {(stock.percent_change)} %<br/>
+                                    Volume: {(stock.volume)} <br/>
                                 </p>
                               
                             </Card>
                         </Link>
                         
                     </Col>
-                ))}
+                    )
+    })}
             </Row>
         </>
     )

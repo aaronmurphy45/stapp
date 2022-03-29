@@ -63,6 +63,7 @@ const dbs = app.database()
 const googleProvider = new firebase.auth.GoogleAuthProvider();
 
 const signInWithEmailAndPassword = async (email, password) => {
+
   try {
     await auth.signInWithEmailAndPassword(email, password);
   } catch (err) {

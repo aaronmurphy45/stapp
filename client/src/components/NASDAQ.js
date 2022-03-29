@@ -1,96 +1,429 @@
 import React, {useState, useEffect} from 'react'
 import millify from 'millify'
 import { Link } from 'react-router-dom'
-import { Card, Row, Col, Input } from 'antd'
-import { useGetStocksQuery } from '../services/yahooRecommmend';
+import { Card, Row, Col, Input, Pagination, Button } from 'antd'
+import { useGetStocksQuery, useGetStockQuoteQuery } from '../services/stockListAPI'
+import LSE2  from './LSE2'
+//import { useGetStocksQuery } from '../services/yahooRecommmend';
 
-//import Loading from "../../public/Spinner.gif"
-
-import { useGetStockTimeSeriesQuery } from '../services/stockTimeSeriesAPI'
-
-export default function NASDAQ({simplified}) {
+export default function LSE(state) {
     
-    console.log("Stocks")
-    const count = simplified ? 10: 100;
-
-    const top100 = "AAPL,ADBE,ADI,ADP,ADSK,AEP,ALGN,AMAT,AMD,AMGN,AMZN,AMSS,ASML,ATVI,AVGO,BIDU,BIIB,BKNG,CDNS,CDW,CERN,CHKP,CHTR,CMCSA,COST,CPRT,CRWD,CSCO,CSX,CTAS,CTSH,DLTR,DOCU,DXCM,EA,EBAY,EXC,FAST,FB,FISV,FOX,,FOXA,GILD,GOOG,GOOGL,HON,IDXX,ILMN,INCY,INTC,INTU,ISRG,JD,KDP,KHC,KLAC,LRCX,LULU,MAR,MCHP,MDLZ,MELI,MNST,MRNA,MRVL,MSFT,MTCH,MU,NFLX,NTES,NVDA,NXPI,OKTA,NXPI,ORLY,PAYX,PCAR,PDD,PEP,PTON,PYPL,QCOM,REGN,ROST,SBUX,SGEN,SIRI,SNPS,SPLK,SWKS,TCOM,TEAM,TMUS,TSLA,TXN,VRSK,VRSN,VRTX,WBA,WDAY,XEL,ZM"
-    const top10 = "AAPL,AMZN,MSFT,FB,GOOGL,GOOG,TSLA,NVDA";
-
-    const top10array = ["AAPL","AMZN","MSFT","FB","GOOGL","GOOG","TSLA","NVDA"];
+   // const count = simplified ? 10: 100;
 
     const [country, setCountry] = React.useState("");
-    const [exchange, setExchange] = React.useState("NASDAQ");
-    const [interval, setInterval] = React.useState("1min");
-
-    const [symbol, setSymbol] = React.useState(top10);
-    const [type, setType] = React.useState("");
-    const format = "json";
-    /*
-    if (count == 10){
-        setSymbol(top10)
-    }
-    else{
-        setSymbol(top100)
-    }
-    */
-   top10array.map((stock=>{
-       
-   }))
-
-    //const {data :stocksList, isFetching } = useGetStocksQuery({symbol,interval});
-
-    const stocksList = []
-    const isFetching = true;
-    //console.log(state)
-    console.log(stocksList)
-
-
+    const [exchange, setExchange] = React.useState("");
+    const [searchTerm, setSearchTerm] = useState('');
+    const [symbol, setSymbol] = React.useState("AAPL,MSFT,AMZN,FB,GOOGL,GOOG,TSLA,TWTR");
     const [stocks, setStocks ] = React.useState([])
+    const [currentarray, setCurrentarray] = React.useState();
+    const [simplified, setSimplified] = React.useState(false);
+    state = {
+        current: 3,
+      };
+    
+    const format = "json";
+    var array = [];
+    var {data :stocksList, isFetching } = useGetStockQuoteQuery({symbol});
+    //const {data :stocksList, isFetching } = useGetStocksQuery({country, symbol, format, type});
+      
+    if (!isFetching){
+        console.log(stocksList)
+        array = Object.values(stocksList)
+        console.log(array)
+        stocksList = array
+        console.log(stocksList)
 
-    const [searchTerm, setSearchTerm] = useState('')
-    console.log(stocks)
+    //console.log(data)
+
+    //const isFetching = false;
+   // const stocksList=[]
+    //const isFetching = false;
+    //const stocksList = ["123", "456", "789"];
+    
+    
+   
+    if (!isFetching) {
+    if (currentarray === undefined) {
+        setCurrentarray(stocksList.slice(0, 10))
+    }
+    var chunkedStocks = stocksList.reduce((chunks, stock, index) => { 
+        const chunkIndex = Math.floor(index / 10);
+        if (!chunks[chunkIndex]) {
+            chunks[chunkIndex] = [];
+        }
+        chunks[chunkIndex].push(stock);
+        return chunks;
+    }, []);
+    
+    }
+
+
+    
+
+
+
+    
+
+    const onChange = page => {
+        console.log(page);
+        setCurrentarray(chunkedStocks[page-1])
+        console.log(currentarray)
+        
+      };
+        
+    }
+
+    /*
+    const [stocksList, setStocksList] = useState([
+        {
+        "symbol":"AACG",
+        "name":"ATA Creativity Global",
+        "currency":"USD",
+        "exchange":"NASDAQ",
+        "country":"United States",
+        "type":"Depositary Receipt",
+    }, 
+    {
+        "symbol":"AACI",
+        "name":"Armada Acquisition Corp. I",
+        "currency":"USD",
+        "exchange":"NASDAQ",
+        "country":"United States",
+        "type":"Common Stock"
+    },
+    {
+        "symbol":"AACP",
+        "name":"ATA Creativity Global",
+        "currency":"USD",
+        "exchange":"NASDAQ",
+        "country":"United States",
+        "type":"Depositary Receipt",
+    }, 
+    {
+        "symbol":"AACT",
+        "name":"Armada Acquisition Corp. I",
+        "currency":"USD",
+        "exchange":"NASDAQ",
+        "country":"United States",
+        "type":"Common Stock"
+    },
+    {
+        "symbol":"AACU",
+        "name":"ATA Creativity Global",
+        "currency":"USD",
+        "exchange":"NASDAQ",
+        "country":"United States",
+        "type":"Depositary Receipt",
+    }, 
+    {
+        "symbol":"AACV",
+        "name":"Armada Acquisition Corp. I",
+        "currency":"USD",
+        "exchange":"NASDAQ",
+        "country":"United States",
+        "type":"Common Stock"
+    },
+    {
+        "symbol":"AACW",
+        "name":"ATA Creativity Global",
+        "currency":"USD",
+        "exchange":"NASDAQ",
+        "country":"United States",
+        "type":"Depositary Receipt",
+    }, 
+    {
+        "symbol":"AACX",
+        "name":"Armada Acquisition Corp. I",
+        "currency":"USD",
+        "exchange":"NASDAQ",
+        "country":"United States",
+        "type":"Common Stock"
+    },
+    {
+        "symbol":"AACZ",
+        "name":"ATA Creativity Global",
+        "currency":"USD",
+        "exchange":"NASDAQ",
+        "country":"United States",
+        "type":"Depositary Receipt",
+    }, 
+    {
+        "symbol":"AAEA",
+        "name":"Armada Acquisition Corp. I",
+        "currency":"USD",
+        "exchange":"NASDAQ",
+        "country":"United States",
+        "type":"Common Stock"
+    }, 
+    {
+        "symbol":"AAEC",
+        "name":"ATA Creativity Global",
+        "currency":"USD",
+        "exchange":"NASDAQ",
+        "country":"United States",
+        "type":"Depositary Receipt",
+    }, 
+    {
+        "symbol":"AAEE",
+        "name":"Armada Acquisition Corp. I",
+        "currency":"USD",
+        "exchange":"NASDAQ",
+        "country":"United States",
+        "type":"Common Stock"
+    },
+    {
+        "symbol":"AAEF",
+        "name":"ATA Creativity Global",
+        "currency":"USD",
+        "exchange":"NASDAQ",
+        "country":"United States",
+        "type":"Depositary Receipt",
+    },
+    {
+        "symbol":"AAEG",
+        "name":"Armada Acquisition Corp. I",
+        "currency":"USD",
+        "exchange":"NASDAQ",
+        "country":"United States",
+        "type":"Common Stock"
+    },
+    {
+        "symbol":"AAEH",
+        "name":"ATA Creativity Global",
+        "currency":"USD",
+        "exchange":"NASDAQ",
+        "country":"United States",
+        "type":"Depositary Receipt",
+    }, 
+    {
+        "symbol":"AAEI",
+        "name":"Armada Acquisition Corp. I",
+        "currency":"USD",
+        "exchange":"NASDAQ",
+        "country":"United States",
+        "type":"Common Stock"
+    },
+    {
+        "symbol":"AAEK",
+        "name":"ATA Creativity Global",
+        "currency":"USD",
+        "exchange":"NASDAQ",
+        "country":"United States",
+        "type":"Depositary Receipt",
+    },
+    {
+        "symbol":"AAEL",
+        "name":"Armada Acquisition Corp. I",
+        "currency":"USD",
+        "exchange":"NASDAQ",
+        "country":"United States",
+        "type":"Common Stock"
+    },
+    {
+
+        "symbol":"AAEM",
+
+
+        "name":"ATA Creativity Global",
+        "currency":"USD",
+        "exchange":"NASDAQ",
+        "country":"United States",
+        "type":"Depositary Receipt",
+    },
+    {
+        "symbol":"AAEN",
+        "name":"Armada Acquisition Corp. I",
+        "currency":"USD",
+        "exchange":"NASDAQ",
+        "country":"United States",
+        "type":"Common Stock"
+    },
+    {
+        "symbol":"AAEO",
+        "name":"ATA Creativity Global",
+        "currency":"USD",
+        "exchange":"NASDAQ",
+        "country":"United States",
+        "type":"Depositary Receipt",
+    },
+    {
+        "symbol":"AAEP",
+        "name":"Armada Acquisition Corp. I",
+        "currency":"USD",
+        "exchange":"NASDAQ",
+        "country":"United States",
+        "type":"Common Stock"
+    },
+    {
+        "symbol":"AAES",
+        "name":"ATA Creativity Global",
+        "currency":"USD",
+        "exchange":"NASDAQ",
+        "country":"United States",
+        "type":"Depositary Receipt",
+    },
+    {
+        "symbol":"AAET",
+        "name":"Armada Acquisition Corp. I",
+        "currency":"USD",
+        "exchange":"NASDAQ",
+        "country":"United States",
+        "type":"Common Stock"
+    },
+    {
+        "symbol":"AAEU",
+        "name":"ATA Creativity Global",
+        "currency":"USD",
+        "exchange":"NASDAQ",
+        "country":"United States",
+        "type":"Depositary Receipt",
+    },
+    {
+        "symbol":"AAEV",
+        "name":"Armada Acquisition Corp. I",
+        "currency":"USD",
+        "exchange":"NASDAQ",
+        "country":"United States",
+        "type":"Common Stock"
+    },
+    {
+        "symbol":"AAEW",
+        "name":"ATA Creativity Global",
+        "currency":"USD",
+        "exchange":"NASDAQ",
+        "country":"United States",
+        "type":"Depositary Receipt",
+    },   {
+        "symbol":"AAEX",
+        "name":"Armada Acquisition Corp. I",
+        "currency":"USD",
+        "exchange":"NASDAQ",
+        "country":"United States",
+        "type":"Common Stock"
+    },
+    {
+        "symbol":"AAEY",
+        "name":"ATA Creativity Global",
+        "currency":"USD",
+        "exchange":"NASDAQ",
+        "country":"United States",
+        "type":"Depositary Receipt",
+    },
+    {
+        "symbol":"AAFA",
+        "name":"Almaden Minerals Ltd.",
+        "currency":"USD",
+        "exchange":"NASDAQ",
+        "country":"United States",
+        "type":"Common Stock"
+    },
+    {
+        "symbol":"AAFB",
+        "name":"Almaden Minerals Ltd.",
+        "currency":"USD",
+        "exchange":"NASDAQ",
+        "country":"United States",
+        "type":"Common Stock"
+    },
+    {
+        "symbol":"AAFC",
+        "name":"Almaden Minerals Ltd.",
+        "currency":"USD",
+        "exchange":"NASDAQ",
+        "country":"United States",
+        "type":"Common Stock"
+    },
+    {
+        "symbol":"AAFF",
+        "name":"Almaden Minerals Ltd.",
+        "currency":"USD",
+        "exchange":"NASDAQ",
+        "country":"United States",
+        "type":"Common Stock"
+    },
+    {
+        "symbol":"AAFG",
+        "name":"Almaden Minerals Ltd.",
+        "currency":"USD",
+        "exchange":"NASDAQ",
+        "country":"United States",
+        "type":"Common Stock"
+    },
+    ])
+    */
+    
+    
+
+    if (simplified){
+        console.log(stocksList)
+
+    //console.log(data)
+
+    //const isFetching = false;
+   // const stocksList=[]
+    //const isFetching = false;
+    //const stocksList = ["123", "456", "789"];
+    
+    
+   
+    
+    }
+    const onChange = page => {
+        console.log(page);
+        setCurrentarray(chunkedStocks[page-1])
+        console.log(currentarray)
+        
+      };
+
+    const ChangeView  = () => {
+        setSimplified(!simplified)
+    }
+
 
 
     useEffect(()=> { 
         //setCryptos(cryptosList?.data?.coins)
-        //set(cryptosList?.data?.coins)
+        const filteredData = stocksList?.data?.filter((stock)=> stock.name.toLowerCase().includes(searchTerm.toLowerCase()))
 
-        // Makee stocks a list version o
+        //const filteredData = stocksList?.filter((stock)=> stock.name.toLowerCase().includes(searchTerm.toLowerCase()))
 
-        const filteredData = stocksList?.data?.filter((stock)=>stock.meta.name.toLowerCase().includes(searchTerm.toLowerCase()))
 
-    
-        setStocks(stocksList)
+
+        setStocks(filteredData)
+
+
     }, [stocksList, searchTerm])
     
     if (isFetching){
         return 'Loading...'
     }
     return (
-        <> {simplified ? <div className = "search-crytpo">
-        <Input placeholder = "Search" onChange = {(e)=> setSearchTerm(e.target.value)}></Input>
-    </div>
-    : <div></div> }
+        <> 
+
+            {simplified ? <LSE2></LSE2> :  <div>
+            <Input placeholder = "Search" onChange = {(e)=> setSearchTerm(e.target.value)}></Input>
+            
             <Row gutters = {[32,32]} className = "crypto-card-container">
-                {stocks?.map((stock)=> (
+                {currentarray?.map((stock)=> (
                     <Col xs ={24} sm={12} lg={6} className ="crypto-card" key ={stock.id}>
                        {/* <Link to = {`'/crypto/${currency.id}'`}> */}
-                       {console.log(stock)}
                             <Card 
                             title = { `${stock.name}`}
                             >
                                 <p>
-                                    Exchange: {(stock.meta.exchange)} <br/>
-                                    Symbol: {(stock.meta.symbol)}  <br/>
-                                    Country: {(stock.meta.country)}  <br/>
-                                    Currency: {(stock.meta.currency)}
+                                    Exchange: {(stock.exchange)} <br/>
+                                    Symbol: {(stock.symbol)}  <br/>
+                                    Price: {(stock.close)} <br/>
+                                    Change: {(stock.change)}  <br/>
+                                    Currency: {(stock.currency)} <br/>
+                                    High/Low: <br/>{(stock.high)}/{(stock.low)}
                                 </p>
                             </Card>
-                        {/*</Link>*/}
                         
                     </Col>
                 ))}
-            </Row>
+            </Row></div>}
+            <Button style = {{width:"100%"}} onClick = {ChangeView}>{simplified ? "View Top 10" : "View All"}</Button>
         </>
     )
 }

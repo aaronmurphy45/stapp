@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import {Link} from 'react-router-dom'
 
+import { Input,Button } from 'antd';
 
 export default function Login({simplified}) {
     
@@ -27,36 +28,44 @@ export default function Login({simplified}) {
         
     }
 
+    
+
     if (simplified) {
         return (
           <div>
           <h1>Login</h1>
-          <input
+          <Input
             type="text"
             className="login__textBox"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="E-mail Address"
           />
-          <input
+           <br/>
+          <br/>
+          <Input
             type="password"
             className="login__textBox"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Password"
           />
-          <button
+           <br/>
+          <br/>
+          <Button
             className="login__btn"
             onClick={() => signInWithEmailAndPassword(email, password)}
           >
             Login
-          </button>
-          <button className="login__btn login__google" onClick={signInWithGoogle}>
+          </Button>
+           <br/>
+          <br/>
+          <Button className="login__btn login__google" onClick={signInWithGoogle}>
             Login with Google
-          </button>
-          <button className="login__btn login__google" onClick={signInWithPopupx}>
+          </Button>
+          <Button className="login__btn login__google" onClick={signInWithPopupx}>
             Login with Facebook
-          </button>
+          </Button>
           <div>
             <Link to="/reset">Forgot Password</Link>
           </div>
@@ -68,39 +77,51 @@ export default function Login({simplified}) {
         )
     }
 
+    // if enter button is clicked 
+    const handleEnter = (event) => {
+        console.log(event.keyCode)
+        if (event.key === 'Enter') {
+          console.log("enter")
+            signInWithEmailAndPassword(email, password)
+        }
+    }
+
 
 
     return (
-        <div className="login" style ={{backgroundColor: "rgb(65,143,247)"}}>
+        <div className="login" style ={{backgroundColor: "rgb(65,143,247)"}} onKeyDown={handleEnter}>
          
         <div className="login__container">
         <h1>Login</h1>
-          <input
+          <Input
             type="text"
             className="login__textBox"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="E-mail Address"
           />
-          <input
+        
+          <Input
             type="password"
             className="login__textBox"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Password"
+            onKeyDown={handleEnter}
           />
-          <button
+      
+          <Button
             className="login__btn"
             onClick={() => signInWithEmailAndPassword(email, password)}
           >
             Login
-          </button>
-          <button className="login__btn login__google" onClick={signInWithGoogle}>
+          </Button>
+          <Button className="login__btn login__google" onClick={signInWithGoogle}>
             Login with Google
-          </button>
-          <button className="login__btn login__google" onClick={signInWithPopupx}>
+          </Button>
+          <Button className="login__btn login__google" onClick={signInWithPopupx}>
             Login with Facebook
-          </button>
+          </Button>
           <div>
             <Link to="/reset">Forgot Password</Link>
           </div>

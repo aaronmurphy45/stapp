@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, Menu , Typography , Avatar}  from 'antd'
 import {Link} from 'react-router-dom'
-import {HomeOutlined, MoneyCollectOutlined, BulbOutlined, FundOutlined , MenuOutlined, MailOutlined} from '@ant-design/icons'
+import {HomeOutlined, MoneyCollectOutlined, BulbOutlined, FundOutlined , MenuOutlined, MailOutlined, StockOutlined} from '@ant-design/icons'
 import { logout } from '../firebase/firebase-config'
 
 import { Breadcrumb } from 'antd';
@@ -42,16 +42,16 @@ export default function NavBar(props) {
         </Menu.Item>
         </Link>
         <Link to = "/mostpopular">
-        <Menu.Item key="app" icon={<AppstoreOutlined />}>
+        <Menu.Item key="app" icon={<StockOutlined />}>
             Most Popular
         </Menu.Item>
         </Link>
         
         <SubMenu key="SubMenu" icon={<SettingOutlined />} title="Markets">
           <Menu.ItemGroup title="Item 1">
-            <Menu.Item key="setting:1">London Stock Exchange</Menu.Item>
-            <Menu.Item key="setting:2">NASDAQ</Menu.Item>
-            <Menu.Item key="setting:3">NYSE</Menu.Item>
+            <Link to = "LSE"><Menu.Item key="setting:1">London Stock Exchange</Menu.Item></Link>
+            <Link to = "NASDAQ"><Menu.Item key="setting:2">NASDAQ</Menu.Item></Link>
+            <Link to = "NYSE"><Menu.Item key="setting:3">NYSE</Menu.Item></Link>
             <Menu.Item key="setting:4">S&P 500</Menu.Item>
             <Menu.Item key="setting:5">Dow Jones</Menu.Item>
           </Menu.ItemGroup>

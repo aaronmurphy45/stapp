@@ -1,77 +1,28 @@
 import React, {useState, useEffect} from 'react'
 import millify from 'millify'
 import { Link } from 'react-router-dom'
-import { Card, Row, Col, Input, Pagination, Button } from 'antd'
+import { Card, Row, Col, Input, Pagination } from 'antd'
 import { useGetStocksQuery, useGetStockQuoteQuery } from '../services/stockListAPI'
-import NYSE2  from './NYSE2'
 //import { useGetStocksQuery } from '../services/yahooRecommmend';
 
-export default function NYSE(state) {
-    
-   // const count = simplified ? 10: 100;
+export default function NYSE2(state) {
 
+   // const count = simplified ? 10: 100;
     const [country, setCountry] = React.useState("");
-    const [exchange, setExchange] = React.useState("");
+    const [exchange, setExchange] = React.useState("NYSE");
     const [searchTerm, setSearchTerm] = useState('');
-    const [symbol, setSymbol] = React.useState("WMT,PFE,XOM,C,BAC,IBM,GS");
-    const [stocks, setStocks ] = React.useState([])
-    const [currentarray, setCurrentarray] = React.useState();
-    const [simplified, setSimplified] = React.useState(false);
+    const [symbol, setSymbol] = React.useState("");
+
+    const [type, setType] = React.useState("");
     state = {
         current: 3,
       };
     
     const format = "json";
-    var array = [];
-    var {data :stocksList, isFetching } = useGetStockQuoteQuery({symbol});
-    //const {data :stocksList, isFetching } = useGetStocksQuery({country, symbol, format, type});
-      
-    if (!isFetching){
-        console.log(stocksList)
-        array = Object.values(stocksList)
-        console.log(array)
-        stocksList = array
-        console.log(stocksList)
-
-    //console.log(data)
-
-    //const isFetching = false;
-   // const stocksList=[]
-    //const isFetching = false;
-    //const stocksList = ["123", "456", "789"];
     
-    
-   
-    if (!isFetching) {
-    if (currentarray === undefined) {
-        setCurrentarray(stocksList.slice(0, 10))
-    }
-    var chunkedStocks = stocksList.reduce((chunks, stock, index) => { 
-        const chunkIndex = Math.floor(index / 10);
-        if (!chunks[chunkIndex]) {
-            chunks[chunkIndex] = [];
-        }
-        chunks[chunkIndex].push(stock);
-        return chunks;
-    }, []);
-    
-    }
-
+    const {data :stocksList, isFetching } = useGetStocksQuery({country, symbol, format, type});
 
     
-
-
-
-    
-
-    const onChange = page => {
-        console.log(page);
-        setCurrentarray(chunkedStocks[page-1])
-        console.log(currentarray)
-        
-      };
-        
-    }
 
     /*
     const [stocksList, setStocksList] = useState([
@@ -351,11 +302,8 @@ export default function NYSE(state) {
     },
     ])
     */
-    
-    
 
-    if (simplified){
-        console.log(stocksList)
+    console.log(stocksList)
 
     //console.log(data)
 
@@ -365,21 +313,36 @@ export default function NYSE(state) {
     //const stocksList = ["123", "456", "789"];
     
     
-   
+    const [stocks, setStocks ] = React.useState([])
+    const [currentarray, setCurrentarray] = React.useState();
+    if (!isFetching) {
+    if (currentarray === undefined) {
+        setCurrentarray(stocksList.data.slice(0, 10))
+    }
+    var chunkedStocks = stocksList.data.reduce((chunks, stock, index) => { 
+        const chunkIndex = Math.floor(index / 10);
+        if (!chunks[chunkIndex]) {
+            chunks[chunkIndex] = [];
+        }
+        chunks[chunkIndex].push(stock);
+        return chunks;
+    }, []);
     
     }
+
+
+    
+
+
+
+    
+
     const onChange = page => {
         console.log(page);
         setCurrentarray(chunkedStocks[page-1])
         console.log(currentarray)
         
       };
-
-    const ChangeView  = () => {
-        setSimplified(!simplified)
-    }
-
-
 
     useEffect(()=> { 
         //setCryptos(cryptosList?.data?.coins)
@@ -399,9 +362,7 @@ export default function NYSE(state) {
     }
     return (
         <> 
-            <h1>New York Stock Exchange</h1>
-            {simplified ? <NYSE2></NYSE2> :  <div>
-            <Input placeholder = "Search" onChange = {(e)=> setSearchTerm(e.target.value)}></Input>
+        <Input placeholder = "Search" onChange = {(e)=> setSearchTerm(e.target.value)}></Input>
             
             <Row gutters = {[32,32]} className = "crypto-card-container">
                 {currentarray?.map((stock)=> (
@@ -411,19 +372,18 @@ export default function NYSE(state) {
                             title = { `${stock.name}`}
                             >
                                 <p>
-                                Exchange: {(stock.exchange)} <br/>
+                                    Exchange: {(stock.exchange)} <br/>
                                     Symbol: {(stock.symbol)}  <br/>
-                                    Price: {(stock.close)} <br/>
-                                    Change: {(stock.change)}  <br/>
-                                    Currency: {(stock.currency)} <br/>
-                                    High/Low: <br/>{(stock.high)}/{(stock.low)}
+                                    Country: {(stock.country)}  <br/>
+                                    Type: {(stock.type)} <br/>
+                                    Currency: {(stock.currency)}
                                 </p>
                             </Card>
                         
                     </Col>
                 ))}
-            </Row></div>}
-            <Button style = {{width:"100%"}} onClick = {ChangeView}>{simplified ? "View Top 10" : "View All"}</Button>
+            </Row>
+            <Pagination total={500} onChange ={onChange} />
         </>
     )
 }

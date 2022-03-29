@@ -22,15 +22,25 @@ const Chartx = (props) => {
 
     
     const x = props.close
-    const y = props.timestamp.map(x => {
+    var y = props.timestamp.map(x => {
         const date = new Date(x)
         // get just the time 
         
-        var s = new Date(x * 1000).toLocaleDateString("en-US")
+        //var s = new Date(x * 1000).toLocaleDateString("en-US")
+        var s = x;
+        
+
+        
+
        
         return s
     })
-  
+
+    // reverse the array
+    y.reverse()
+    
+    
+
     const data = {
         labels: y,
         datasets : [

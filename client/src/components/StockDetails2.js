@@ -2,7 +2,7 @@ import React, { useEffect, useState} from 'react'
 import HTMLReactParser from 'html-react-parser'
 import { useParams } from 'react-router'
 import millify from 'millify'
-import { Col, Row, Typography, Select } from 'antd'
+import { Col, Row, Typography, Select, Timeline } from 'antd'
 import { MoneyCollectOutlined, DollarCircleOutlined,UpOutlined, FundOutlined, ExclamationCircleOutlined, StopOutlined, TrophyOutlined, CheckOutlined, NumberOutlined, ThunderboltOutlined, UpCircleOutlined, DownOutlined } from '@ant-design/icons';
 import FileUpload from '../machineLearning/FileUpload'
 import { Chart } from '.'
@@ -29,7 +29,7 @@ import moment from 'moment';
 import { DislikeOutlined, LikeOutlined, DislikeFilled, LikeFilled } from '@ant-design/icons';
 import { Collapse } from 'antd';
 import { stappsRating} from '../services/stappsRating'
-
+import { useGetStockQuoteQuery, useGetStockTimeSeriesQuery, useGetStockLogoQuery } from '../services/stockListAPI'
 const { Panel } = Collapse;
 
 
@@ -40,7 +40,10 @@ const { TextArea } = Input;
 
 
 
-export default function StockDetails() {
+export default function StockDetails2() {
+
+    
+
     const {stockId} = useParams();
 
     const [user] = useAuthState(auth);
@@ -49,6 +52,7 @@ export default function StockDetails() {
     
     console.log(stockId)
     PageDecider(stockId);
+
     addRecent(stockId)
     const [likes, setLikes] = useState(0);
     const [dislikes, setDislikes] = useState(0);
@@ -56,30 +60,82 @@ export default function StockDetails() {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [timePeriod, setTimePeriod] = useState('7d')
     const [comment, setComment] = useState('');
-    //const [comments, setComments] = useState([]);
-    //const {data: comments, loading: commentsLoading, error: commentsError} = getComments(stockId);
+    const [interval, setInterval] = useState("1h");
     
-   
+    const {data, isFetching} = useGetStockQuoteQuery(stockId);
 
 
-    //const [comments, setComments] = useState([]);   
+    const {data: data2, isFetching: isFetching2} = useGetStockTimeSeriesQuery({symbol: stockId, interval: interval});
+    //const {data2, isFetching2} = useGetStockTimeSeriesQuery({symbol: stockId, interval: interval});
+    const {data: data3  , isFetching3} = useGetStockLogoQuery(stockId);
+    
        
     var arrayObject3 =[];
 
-    var isFetching = false;
     
+    var logo;
    
-   
+    const timestamp = []
+    const close = []
+
+    if (data3){
+        console.log(data3)
+        logo = data3.url
+
+    }
+
+    console.log(data)
   
+   
+    if (data2){
+        console.log(data2)
+        data2?.values?.forEach(element => {
+            
+
+            // GET the time right now
+
+            
+            // convert date to YYYY-MM-DD
+            console.log(element.datetime)
+            var date = new Date(element.datetime)
+
+            //GET TIME NOW
+
+
+            timestamp.push(element.datetime)
+        
+        
+            close.push(element.close)
+        });
+       
+        console.log(timestamp)
+        console.log(close)
+
+    }
     
-    //const {data, isFetching} = useGetCryptoDetailsQuery(coinId)
-    const data = quote;
+    console.log(data)
+    if (data) {
+        var stockDetails = data;
+        
+    }
+    else{
+        return <div>Loading...</div>
+    }
+
+   
+   
+
     
-    var stockDetails;
+    
+    
     //const stockDetails = data?.data?.coin;
 
-    const data2 = spark;
+    //const data2 = spark;
     //const isFetching2 = false;
+
+
+    // Twelve Data getTimeSeries
+    
 
 
     // check if stock id is key in dictionary of data2
@@ -122,9 +178,9 @@ export default function StockDetails() {
 
     let i =0;
     var xx;
-
+    /*
     data?.quoteResponse?.result?.map(stock => {
-    if (stock.symbol == stockId) {
+    if (stock.symbol == "AAPL") {
 
         stockDetails = stock;
         // check if stock id is key in dictionary of data2
@@ -142,13 +198,21 @@ export default function StockDetails() {
         return stock;
     }
 })
+*/
     if (isFetching){
         
         return <div>Loading...</div>
     }
     
 
-    const time = ['3h', '24h', '7d', '30d', '1y', '3m', '3y', '5y'];
+    const time = ['1min', '5min', '15min', '30min', '45min', '1h', '2h', '4h', '8h', '1day', '1week', '1month']
+
+    // on chat time change update the call
+    const onChange = (value) => {
+        setInterval(value)
+
+    }
+
     
 
 
@@ -214,6 +278,8 @@ export default function StockDetails() {
     }
 
 
+
+
    
     return (
         <div>
@@ -221,20 +287,32 @@ export default function StockDetails() {
             <Col className = "coin-detail-container">
                 <Col className = "coin-heading-container">
                     <div style = {chartStyle}>
-                    <Chart symbol = {stockDetails.symbol} timestamp = {xx.timestamp } close = {xx.close} />
+                    <Select defaultValue="1h" style={{ width: 120 }} onChange={onChange}>
+                        {time.map(item => (
+                            <Option value={item}>{item}</Option>
+                        ))}
+                    </Select>
+                    <Chart symbol = {stockDetails.symbol} timestamp = {timestamp} close = {close} />
                     </div>
                
                     <Title level={2} className = "coin-name">
-                        {stockDetails.displayName} ({stockDetails.symbol}) {stockDetails.ask}
+                        {stockDetails.name} ({stockDetails.symbol}) {stockDetails.ask} {stockDetails.percent_change}%
+                        {(stockDetails.percent_change < 0) ? <DownOutlined style = {{color: '#f5222d'}}/> : <UpCircleOutlined style = {{color: '#52c41a'}}/>}
+                        <img src= {logo} style = {{width: '50px', height: '50px'}}/>
                     </Title>
 
                     <p> Stock Details <br/>
-                    Ask : {stockDetails.ask} <br/>
-                    Bid : {stockDetails.bid} <br/>
-                    Change :  {stockDetails.change} <br/>
-                    Market : {stockDetails.market}</p>
-                    Book: value : {stockDetails.bookValue}<br/>
-                
+                        Open: {stockDetails.open} <br/>
+                        Close: {stockDetails.close} <br/>
+                        Change :  {stockDetails.change} <br/>
+                        Market : {stockDetails.exchange}</p>
+                        High: {stockDetails.high} <br/>
+                        Low: {stockDetails.low} <br/>
+                        Volume: {stockDetails.volume} <br/>
+                        Previous Close: {stockDetails.previous_close} <br/>
+
+
+                    
                     <br/><br/> <br/><br/>
                     <br/>
 
@@ -244,14 +322,35 @@ export default function StockDetails() {
                     </Button>
                     <div>Stapp's Stock Rating: {stappsr}</div>
                     <Collapse style = {{marginTop:"5%"}} onChange={callback}>
-                    <Panel header="This is panel header 1" key="1">
-                        <p>{stockDetails.description}</p>
+                    <Panel header="Stock History" key="1" style = {{ maxHeight: "20%" , overflowX :"scroll"}}>
+                        <Select defaultValue="1h" style={{ width: 120 }} onChange={onChange}>
+                            {time.map(item => (
+                                <Option value={item}>{item}</Option>
+                            ))}
+                        </Select>
+                        <br/>
+                        <br/>
+                        <Timeline style = {{ marginLeft: "10px",maxHeight:"30vh", overflowX:"scroll", border: "1px solid grey"}}>
+                            <br/>
+
+                            {data2?.values?.map(item => {
+                               if (item.open > item.close) {
+                                      return <Timeline.Item color="red">Date : {item.datetime}<br/> Open : {item.open} <br/> Close : {item.close}</Timeline.Item>   
+                                } else {
+                                    return <Timeline.Item color="green">Date : {item.datetime}<br/> Open : {item.open} <br/> Close : {item.close}</Timeline.Item>
+                                }
+                            
+                            })}
+                        </Timeline>
                     </Panel>
-                    <Panel header="Postmarket Information" key="2">
-                        <p>Post Market Change : {stockDetails.postMarketChange}</p>
-                        <p>Post Market Change Percent : {stockDetails.postMarketChangePercent}%</p>
-                        <p>Post Market Price : {stockDetails.postMarketPrice}</p>
-                        <p>Post Market Time : {new Date(stockDetails.postMarketTime).toLocaleString()}</p>
+                    <Panel header="52 Week Information" key="2">
+                        <p>Low : {stockDetails.fifty_two_week.low}</p>
+                        <p>High : {stockDetails.fifty_two_week.high}</p>
+                        <p>Low Change : {stockDetails.fifty_two_week.low_change}</p>
+                        <p>High Change : {stockDetails.fifty_two_week.high_change}</p>
+                        <p>Low Change Percent : { stockDetails.fifty_two_week.low_chaqnge_percent}</p>
+                        <p>High Change Percent : {stockDetails.fifty_two_week.high_change_percent}</p>
+                        <p>Range : {stockDetails.fifty_two_week.range}</p>
                     </Panel>
                     <Panel header="This is panel header 3" key="3">
                     <p>infor3</p>

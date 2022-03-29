@@ -15,7 +15,7 @@ const {Option} = Select;
 const demoImage = "https://www.bing.com/th?id=OVFT.mpzuVZnv8dwIMRfQGPbOPC&pid=News"
 
 export default function SidePanelNews(props) {
-    const simplified = true;
+    const simplified = props.simplified;
     let search;
     if (props.stockname!=undefined){
         console.log(props.stockname)
@@ -30,17 +30,25 @@ export default function SidePanelNews(props) {
     const [newsCategory, setNewsCategory] = React.useState();
     //const {data, isFetching} = useGetCryptosQuery(100);
     console.log(search)
-    const {data : cryptoNews} = useGetCryptoNewsQuery({search, count : simplified ? 6: 12})
+    const {data : cryptoNews} = useGetCryptoNewsQuery({search, count : simplified ? 20: 12})
 
     console.log(cryptoNews)
-
+    console.log(simplified)
+    var h  
+    if (simplified){
+       h = "1200%"
+    }
+    else{
+        console.log("1000000")
+        h = "100%"
+    }
     // css for container
     const containerStyle = {
         margin: "0 auto",
-        top: "100px",
+        top: "115px",
         right: "0",
         width: "25%",
-        maxHeight:"100%",
+        maxHeight: h,
         position: "absolute",
         overflowX: "scroll",
         borderLeft: "3px solid rgb(67, 143, 255)",

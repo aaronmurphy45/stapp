@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 import machineLearn from '../machineLearning/MachineLearning'
 
 import { useGetCryptosQuery } from '../services/cryptoAPI'
-import { Cryptocurrencies, CryptoNews, Stocks, StockNews, MostPopular, Favourites } from '../components'
+import { Cryptocurrencies, CryptoNews, Stocks, StockNews, MostPopular, Favourites } from '.'
 import NASDAQ from './NASDAQ'
 import MachineLearn from '../machineLearning/MachineLearning'
 import HighChange from './HighChange'
@@ -30,8 +30,9 @@ export default function Homepage() {
     }
 */
     return (
-        
-    </*<MachineLearn></MachineLearn>*/>
+    
+   
+    <div style = {{overflowX:"scroll"}}>
            <div className = "home-heading-container">
                <Title level = {2} className = "home-title">Your Favourites</Title>
                <Title level ={3} className ="show-more"><Link to = '/favourites'>Show More</Link></Title>
@@ -75,6 +76,6 @@ export default function Homepage() {
            </div>
 
            <CryptoNews style = {{marginLeft: "20%" }}simplified> </CryptoNews>
-        </>
+        </div>
     )
 }

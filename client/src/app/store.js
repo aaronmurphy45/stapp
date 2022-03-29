@@ -6,6 +6,7 @@ import { stockListApi } from '../services/stockListAPI';
 import { stockTimeSeriesApi } from '../services/stockTimeSeriesAPI';
 import { yahooRecommmend } from '../services/yahooRecommmend';
 import { predictApi } from '../services/pricePrediction';
+import { mmApi } from '../services/alphaVantage';
 
 
 export default configureStore({
@@ -16,5 +17,6 @@ export default configureStore({
         [stockTimeSeriesApi.reducerPath]: stockTimeSeriesApi.reducer,
         [yahooRecommmend.reducerPath]: yahooRecommmend.reducer,
         [predictApi.reducerPath]: predictApi.reducer,
+
     },
 });

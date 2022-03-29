@@ -8,7 +8,7 @@ import { Layout, Typography, Space } from 'antd';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 import 'firebase/compat/auth';
-import {NavBar, NavBar2, Homepage,User, Exchanges,Favourites,StockDetails, Cryptocurrencies,Root, CryptoDetails , CryptoNews , Stocks,StockNews, NASDAQ, MostPopular, NYSE, LSE, SidePanelNews} from "./components/index"
+import {NavBar, NavBar2, Homepage,User, Exchanges,Favourites,StockDetails,StockDetails2, Cryptocurrencies,Root, CryptoDetails , CryptoNews , Stocks,StockNews, NASDAQ, MostPopular, NYSE, LSE, SidePanelNews} from "./components/index"
 
 
 import Login from './components/Login';
@@ -54,6 +54,14 @@ function App() {
 
 
   console.log(stockid);
+  const footerStyle = {
+    textAlign: "center",
+    backgroundColor: "#f5f5f5",
+    padding: "10px",
+    marginTop: "10px",
+    marginBottom: "10px"
+  };
+  
  
   return (
     
@@ -78,18 +86,18 @@ function App() {
             <div className = "routes">
               <Routes>
                 <Route exact path="/" element={<Root />} />
-                  <Route path = "homepage" element = {<div><Homepage></Homepage><SidePanelNews ></SidePanelNews></div>}>
+                  <Route path = "homepage" element = {<div><Homepage></Homepage><SidePanelNews simplified></SidePanelNews></div>}>
 
                   </Route>
-                  <Route exact path = "/NASDAQ" element = {<div><NASDAQ></NASDAQ><SidePanelNews ></SidePanelNews></div>}>
+                  <Route exact path = "/NASDAQ" element = {<div><NASDAQ></NASDAQ><SidePanelNews></SidePanelNews></div>}>
                   </Route>
-                  <Route exact path = "/NYSE" element= {<NYSE></NYSE>}>
+                  <Route exact path = "/NYSE" element= {<div><NYSE></NYSE><SidePanelNews></SidePanelNews></div>}>
                   </Route>
-                  <Route exact path = "/LSE" element={<LSE></LSE>}>
+                  <Route exact path = "/LSE" element={<div><LSE></LSE><SidePanelNews></SidePanelNews></div>}>
                   </Route>
                   <Route exact path = "/highchange" element={<HighChange></HighChange>}>
                   </Route>
-                  <Route exact path = "/favourites" element={<div><Favourites></Favourites><SidePanelNews></SidePanelNews></div>}>
+                  <Route exact path = "/favourites" element={<div><Favourites></Favourites><SidePanelNews simplified = {false}></SidePanelNews></div>}>
                   </Route>
                   <Route exact path = "/lowchange" element={<LowChange></LowChange>}>
                   </Route>
@@ -103,7 +111,7 @@ function App() {
                   </Route>
                   <Route exact path = '/crypto/:coinId' element = {<CryptoDetails></CryptoDetails>}>
                   </Route>
-                  <Route exact path = '/stock/:stockId' element = {<div><StockDetails></StockDetails></div>}>
+                  <Route exact path = '/stock/:stockId' element = {<div><StockDetails2></StockDetails2></div>}>
                   </Route>
                   <Route exact path = "/cryptonews" element = {<CryptoNews></CryptoNews>}>
                   </Route>
@@ -117,19 +125,16 @@ function App() {
             </div>
           </Layout>
 
-      <div className = "footer" >
-          <Typography.Title level = {5} style = {{color : 'white', textAlign: "center"}}>
-           CrypToYou <br/>
-           Created By Aaron Murphy <br/>
-           All Rights Reserved
-          </Typography.Title>
-          <Space>
-            <Link to = "/">Home</Link>
-            <Link to = "/exchange">Exchange</Link>
-            <Link to = "/news">News</Link>
-            <Link to = "/cryptocurrencies">CryptoCurrencies</Link>
+      <div style = {footerStyle}>
+        <h2>Thank you for visiting Stapp</h2>
+        <br/>
+        <Typography.Text>
+          <Space size="middle">
+            <Link to="/">Home</Link>
+          
 
           </Space>
+        </Typography.Text>
       </div>
       </div></div>}
       

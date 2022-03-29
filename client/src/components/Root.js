@@ -10,6 +10,7 @@ import { Modal, Button } from 'antd'
 import { useState } from 'react';
 import Login from './Login';
 import Register from './Register';
+import { StockOutlined } from '@ant-design/icons';
 
 
 
@@ -51,6 +52,13 @@ export default function Root() {
     }
 
     const headerst = {
+        marginLeft: "10%",
+        color: "white",
+        fontSize: "80px",
+        fontWeight: "bold",
+    }
+    const headerst2 = {
+        marginLeft: "10%",
         color: "white",
         fontSize: "30px",
         fontWeight: "bold",
@@ -58,9 +66,7 @@ export default function Root() {
     const containerStyle = {
         backgroundColor: "rgb(65,143,247)",
         width: "100%",
-        height: "10%",
-
-       
+        height: "5%",
     }
     const imageStyle = {
         width: "105%",
@@ -68,6 +74,8 @@ export default function Root() {
         opacity: 0.5
 
     }
+
+    
     const imageButtonContainerStyle = {
         backgroundColor: "white",
         borderRadius : "5px",
@@ -80,17 +88,31 @@ export default function Root() {
     const bigButtonStyle = {
         backgroundColor: "rgb(65,143,247)",
         color: "white",
+        fontSize: "20px",
         border: "none",
-        padding: "10px 15px",
+        width: "100%",
+        height: "30%",
         borderRadius: "3px",
         cursor: "pointer",
         float: "right",
     }
     const fr = {
+        marginTop: "10%",
+        alignItems: "center",
         float: "right",
+        width: "50%",
+        height: "100%"
     }
     const fl = {
+        marginLeft: "10px",
         float: "left",
+    }
+    
+    const smalltextstyle={
+        color: "black",
+        fontSize: "20px",
+        fontWeight: "bold",
+        margin: "auto"
     }
 
     const showLModal = () => {
@@ -116,53 +138,68 @@ export default function Root() {
     const handleRCancel = () => {
         setIsRModalVisible(false);
     };
+
+    const listStyle = {
+        color : "black",
+        fontSize: "10px",
+        fontWeight: "italic",
+        borderBottom: "1px solid rgb(65,143,247)"
+    }
     
     
 
     return (
         <div style = {containerStyle} >
 
-            <h1 style = {headerst}>WELCOME TO STAPP</h1>
-            <p>Stock Market Analysis and Prediction Application</p>
-            <Link to = "/login">
-                <button style = {buttonStyle}>Login</button>
-            </Link>
-            <Link to = "/register">
-                <button style = {buttonStyle}>Register</button>
-            </Link>
+            <h1 style = {headerst}>STAPP</h1>
+            <h2 style={headerst2}>Stock Market Analysis and Prediction Application</h2>
+           
+            <button onClick={showLModal} style = {buttonStyle}>Login</button>
+            
+            
+            <button onClick={showLModal} style = {buttonStyle}>Register</button>
+          
             <img style = {imageStyle} src = {stockmar}></img>
             <div style = {imageButtonContainerStyle}>
                 
                 <h1> Start Learning about the Stock Market Today</h1>
                 <div style = {fl}>
-                <p>Learn about</p>
-                <ul>
-                    <li>Stock Market</li>
-                    <li>Stock Market Trends</li>
-                    <li>Stock Market Analysis</li>
-                    <li>Stock Market Prediction</li>
-                    <li>Cryptocurrencies</li>
-                    <li>NFT's</li>
-                    <li>Commodities</li>
-                    <li>Forex</li>
-                </ul>
+                <p>Learn about </p> <StockOutlined ></StockOutlined>
+                
+               <p style = {listStyle}>Stock Market</p>
+                    <p style = {listStyle}>Cryptocurrency</p>
+                    <p style = {listStyle}>Stock Market Trends</p>
+                    <p style = {listStyle}>Stock Market Analysis</p>
+                    <p style = {listStyle}>Stock Market Prediction</p>
+                    <p style = {listStyle}>Forex</p>
+                    <p style = {listStyle}>Futures</p>
+                    <p style = {listStyle}>Options</p>
+                    <p style = {listStyle}>Commodities</p>
+                    <p style = {listStyle}>Bonds</p>
+
+
+               
                 </div>
                 <div style = {fr}>
-                <Button type="primary" onClick={showLModal}>
+                <Button style = {bigButtonStyle} type="primary" onClick={showLModal}>
                         Login Now
                 </Button>
+                <br/> <br/>
                 <h2>or</h2>
-                <Button type="primary" onClick={showRModal}>
+                <Button style = {bigButtonStyle} type="primary" onClick={showRModal}>
                         Register Now
                 </Button>
+                <br/>
                 </div>
 
             </div>
              
-            <Modal title="Login" visible={isLModalVisible} onOk={handleLOk} onCancel={handleLCancel}>
+            <Modal title="Stapp" visible={isLModalVisible} onOk={handleLOk} onCancel={handleLCancel} okButtonProps={{ style: { display: 'none'} }}
+          cancelButtonProps={{ style: { display: 'none'} }}>
                     <Login simplified ></Login>
             </Modal>
-            <Modal title="Register" visible={isRModalVisible} onOk={handleROk} onCancel={handleRCancel}>
+            <Modal title="Stapp" visible={isRModalVisible} onOk={handleROk} onCancel={handleRCancel} okButtonProps={{ style: { display: 'none'} }}
+          cancelButtonProps={{ style: { display: 'none'}}}>
                     <Register simplified ></Register>
             </Modal>
         </div>

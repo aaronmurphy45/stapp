@@ -23,8 +23,14 @@ export const stockListApi = createApi({
             query : ({country, exchange, symbol, format, type}) => createRequest(`/stocks?country=${country}&symbols=${symbol}&format=${format}&type=${type}`)
         }),
         getStockLogo : builder.query({
-            query: ({symbol}) => createRequest(`/logo?symbol=${symbol}`)
-        })
+            query: (symbol) => createRequest(`/logo?symbol=${symbol}`)
+        }),
+        getStockQuote : builder.query({
+            query: (symbol) => createRequest(`/quote?symbol=${symbol}`)
+        }),
+        getStockTimeSeries : builder.query({
+            query: ({symbol, interval}) => createRequest(`/time_series?symbol=${symbol}&interval=${interval}`)
+        }),
     })
     /*
     endpoints : (builder) => ({
@@ -38,7 +44,16 @@ export const {
     useGetStocksQuery,
 } = stockListApi
 export const {
+    useGetMarektMoversQuery,
+} = stockListApi
+export const {
     useGetStockLogoQuery,
+}= stockListApi
+export const {
+    useGetStockQuoteQuery,
+}= stockListApi
+export const {
+    useGetStockTimeSeriesQuery,
 }= stockListApi
 /*
 export const { 

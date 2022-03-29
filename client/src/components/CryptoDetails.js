@@ -21,7 +21,9 @@ export default function CryptoDetails() {
 
     const [timePeriod, setTimePeriod] = useState('7d')
 
-    //const {data, isFetching} = useGetCryptoDetailsQuery(coinId)
+    //const {data : cryptovariables, isFetching, error} = useGetCryptoDetailsQuery(coinId)
+    
+    
     const data = crypto;
     const isFetching = false;
     var cryptoDetails;
