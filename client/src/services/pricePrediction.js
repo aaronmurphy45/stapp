@@ -18,7 +18,7 @@ export const predictApi = createApi({
     baseQuery: fetchBaseQuery({baseUrl}),
     endpoints : (builder) => ({
         getPredict: builder.query({
-            query : ({symbol, epochs,numOfDays}) => createRequest(`?epochs=${epochs}&symbol=${symbol}&lookup_step=${numOfDays}`)
+            query : ({symbol, epochs,numOfDays,diffdate, use, save}) => createRequest(`?epochs=${epochs}&symbol=${symbol}&lookup_step=${numOfDays}&start=&end=&use=${use}&save=${save}`),
         }),
     })
 })

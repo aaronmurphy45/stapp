@@ -43,10 +43,12 @@ export default function Homepage() {
                <Title level ={3} className ="show-more"><Link to = '/mostpopular'>Show More</Link></Title>
            </div>
             <MostPopular simplified></MostPopular>
+                {/*
            <div className = "home-heading-container">
                <Title level = {2} className = "home-title">Biggest Movers</Title>
                <Title level ={3} className ="show-more"><Link to = '/highchange'>Show More</Link></Title>
            </div>
+       
            <HighChange simplified></HighChange>
            <div className = "home-heading-container">
                <Title level = {2} className = "home-title">Biggest Losers</Title>
@@ -57,25 +59,21 @@ export default function Homepage() {
                <Title level = {2} className = "home-title"> Top 10 Stocks</Title>
                <Title level ={3} className ="show-more"><Link to = '/stocks'>Show More</Link></Title>
            </div>
+    */}
             {/*
            <NASDAQ simplidied></NASDAQ>
             */}
            <div className = "home-heading-container">
-               <Title level = {2} className = "home-title"> Top 10 Crypto Currencies </Title>
+               <Title level = {2} className = "home-title"> Top 50 Crypto Currencies </Title>
                <Title level ={3} className ="show-more"><Link to = '/cryptocurrencies'>Show More</Link></Title>
            </div>
           <Cryptocurrencies simplified></Cryptocurrencies>
            <div className = "home-heading-container">
-               <Title level = {2} className = "home-title"> Latest Crypto News </Title>
+               <Title level = {2} className = "home-title"> Latest News </Title>
                <Title level ={3} className ="show-more"><Link to = '/cryptonews'>Show More</Link></Title>
            </div>
-           <CryptoNews simplified> </CryptoNews>
-           <div className = "home-heading-container">
-               <Title level = {2} className = "home-title"> Latest Stocks News </Title>
-               <Title level ={3} className ="show-more"><Link to = '/stocknews'>Show More</Link></Title>
-           </div>
+           
 
-           <CryptoNews style = {{marginLeft: "20%" }}simplified> </CryptoNews>
         </div>
     )
 }

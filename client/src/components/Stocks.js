@@ -7,7 +7,6 @@ import { Button } from 'antd'
 
 export default function Stocks(state) {
 
-    console.log("Stocks")
    // const count = simplified ? 10: 100;
     const [country, setCountry] = React.useState("");
     const [exchange, setExchange] = React.useState("NASDAQ");
@@ -15,16 +14,14 @@ export default function Stocks(state) {
     const [type, setType] = React.useState("");
     const format = "json";
     const {data :stocksList, isFetching } = useGetStocksQuery({country, exchange, symbol, format, type});
-    console.log(state)
-    console.log(stocksList)
-    
+
     const [stocks, setStocks ] = React.useState([])
 
     const [searchTerm, setSearchTerm] = useState('')
-    console.log(stocks)
+   
 
     const xAdd = (x) => {
-        console.log(x)
+
         setStocks(x)
     }
 

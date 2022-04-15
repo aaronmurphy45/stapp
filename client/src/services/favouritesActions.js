@@ -9,9 +9,10 @@ const addFavourites = (newvalue, uid) => {
    
     const db = dbs.ref(`Users/-MxJXOWOc4gpZU10vKMb/${uid}`)
         console.log(db)
-    var favs;
+        var favs;
         //dbs.ref(`Users`).push(obj)
-
+        console.log(newvalue)
+        console.log(uid)
        
         db.once('value', function(snapshot) {
             console.log(snapshot)
@@ -35,11 +36,13 @@ const addFavourites = (newvalue, uid) => {
                     }
                     console.log(favs)
                     dbs.ref(`Users/-MxJXOWOc4gpZU10vKMb/${uid}/favourites`).update(favs)
+                    window.location.reload()
 
                 }
             }
             catch(err) {
                 dbs.ref(`Users/-MxJXOWOc4gpZU10vKMb/${uid}`).update({favourites : [newvalue]})
+                window.location.reload()
                 console.log(err)
 
             }
@@ -61,7 +64,7 @@ const addFavourites = (newvalue, uid) => {
             else {
                     if (favs.includes(searchTerm)) {
                         favs.splice(favs.indexOf(searchTerm), 1)
-                        window.location.reload()
+                        
                     }
                     else {
                         alert("Not in favourites")
@@ -71,10 +74,12 @@ const addFavourites = (newvalue, uid) => {
                     favs.push('EMPTY')
                 }
                 dbs.ref(`Users/-MxJXOWOc4gpZU10vKMb/${uid}/favourites`).set(favs)
+                window.location.reload()
             
         })
         getFavourites()
         // refresh the page
+
        
        
        

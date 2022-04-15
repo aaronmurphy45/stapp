@@ -303,8 +303,6 @@ export default function LSE2(state) {
     ])
     */
 
-    console.log(stocksList)
-
     //console.log(data)
 
     //const isFetching = false;
@@ -338,9 +336,8 @@ export default function LSE2(state) {
     
 
     const onChange = page => {
-        console.log(page);
+   
         setCurrentarray(chunkedStocks[page-1])
-        console.log(currentarray)
         
       };
 

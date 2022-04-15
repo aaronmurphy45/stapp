@@ -3,6 +3,7 @@ import millify from 'millify'
 import { Link } from 'react-router-dom'
 import { Card, Row, Col, Input, Pagination } from 'antd'
 import { useGetStocksQuery, useGetStockQuoteQuery } from '../services/stockListAPI'
+import { Spin } from 'antd';
 //import { useGetStocksQuery } from '../services/yahooRecommmend';
 
 export default function LSE2(state) {
@@ -305,8 +306,7 @@ export default function LSE2(state) {
     ])
     */
 
-    console.log(stocksList)
-
+    
     //console.log(data)
 
     //const isFetching = false;
@@ -340,9 +340,8 @@ export default function LSE2(state) {
     
 
     const onChange = page => {
-        console.log(page);
         setCurrentarray(chunkedStocks[page-1])
-        console.log(currentarray)
+
         
       };
 
@@ -360,12 +359,12 @@ export default function LSE2(state) {
     }, [stocksList, searchTerm])
     
     if (isFetching){
-        return 'Loading...'
+        return <Spin></Spin>
     }
     return (
         <> 
         <Input placeholder = "Search" onChange = {(e)=> setSearchTerm(e.target.value)}></Input>
-            
+        
             <Row gutters = {[32,32]} className = "crypto-card-container">
                 {currentarray?.map((stock)=> (
                     <Col xs ={24} sm={12} lg={6} className ="crypto-card" key ={stock.id}>

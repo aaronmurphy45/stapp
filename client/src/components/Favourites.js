@@ -6,11 +6,17 @@ import { useGetCryptosQuery } from '../services/cryptoAPI'
 import { Select } from 'antd'
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useGetStockSparkQuery } from '../services/yahooRecommmend'
+import { Spin, Modal } from 'antd';
+
+
 
 import {addFavourites, deleteFavourites, getFavourites, favsx} from '../services/favouritesActions'
-import Chart  from './Chart'
+import Chart2  from './Chart2'
 import { useGetStockQuoteQuery } from '../services/stockListAPI'
 import { useGetStockTimeSeriesQuery } from '../services/stockListAPI'
+
+import { faHeartCrack } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import { auth } from '../firebase/firebase-config'
 
@@ -18,6 +24,10 @@ import {ref,dbs, getDatabase, child, get, storage, getDownloadUrl, db } from "..
 import { set } from 'firebase/database'
 import { spark } from './aJSON/spark'
 import { crypto } from './aJSON/crypto'
+import { UpCircleOutlined, DownCircleOutlined, LineChartOutlined } from '@ant-design/icons'
+import ReactTooltip from 'react-tooltip'
+
+import { currencySymbol, currencyX } from './User'
 
 export default function Favourites({simplified}) {
     
@@ -27,9 +37,13 @@ export default function Favourites({simplified}) {
     var x;
     //const {data :cryptosList, isFetching } = useGetCryptosQuery(100);
     const [cryptos, setCryptos ] = React.useState([])
+    const [symbol, setSymbol] = React.useState("")
 
     const [searchTerm, setSearchTerm] = useState('')
     let highchangex = [];
+    const [isModalVisible, setIsModalVisible] = useState(false);
+
+    var color;
 
     const [highChange, setHighChange] = useState();
     var check = false;
@@ -62,17 +76,15 @@ export default function Favourites({simplified}) {
         const db = dbs.ref(`Users/-MxJXOWOc4gpZU10vKMb/${uid}/favourites`)
         db.once('value', function(snapshot) {
             const favs = snapshot.val()
-            console.log(snapshot)
-            console.log(favs)
+    
             if (favs == undefined || favs == null || (favs.length == 0 && favs[0] == 'EMPTY')) {
                  console.log("No favourites")
             }
             else {
                 favsv = favs
-                console.log("this: "+ favsv)
                 // turn array into string
                 favsv = favsv.join(',')
-                console.log(favsv)
+    
                 setFavourites(favsv)
                 
                 
@@ -82,32 +94,37 @@ export default function Favourites({simplified}) {
 
 
         const { data: stocksList, isFetching, error } = useGetStockQuoteQuery(favourites);
-        const { data: stocksTimeSeries, isFetching2, error2 } = useGetStockTimeSeriesQuery({symbol: favourites, interval: interval});
+        //const { data: stocksTimeSeries, isFetching2, error2 } = useGetStockTimeSeriesQuery({symbol: favourites, interval: interval});
 
-        console.log(stocksTimeSeries)
+        //console.log(stocksTimeSeries)
 
         //const { data2, isFetching2 } = useGetStockTimeSeriesQuery({symbol: favourites, interval: interval});
-        console.log(stocksList)
+ 
 
-        const timestamp = []
-        const close = []
+       var timestamp = []
+        var close = []
     
 
         if (stocksList){
             var arrayObject = Object.values(stocksList)
         }
+        /*
         if (stocksTimeSeries){
             var arrayObject2 = Object.values(stocksTimeSeries)
-        
-           
-            console.log(timestamp)
-            console.log(close)
+            console.log(arrayObject2)
     
         
         }
+        */
         //console.log(stocksList)
 
+        const handleOk = () => {
+            setIsModalVisible(false);
+          };
         
+          const handleCancel = () => {
+            setIsModalVisible(false);
+          };
 
         
 
@@ -200,7 +217,7 @@ export default function Favourites({simplified}) {
     }
     const xGet = (uid) => {
         xz = getFavourites(uid)
-        console.log(xz)
+   
         
         return xz
     }
@@ -230,46 +247,98 @@ export default function Favourites({simplified}) {
         }
         return string
     }
-        
+    if (error){
+        return <div>Error</div>
+
+    }
+    /*
+    while (error2){
+        return <div>Error</div>
+    }
+    */
+   
+
+    const showModal = (symbol) => {
+        setSymbol(symbol)
+
+        setIsModalVisible(true);
+      };
 
    
     if  (isFetching) {
-        return <div>Loading...</div>
+        return <Spin></Spin>
     }
+
+    if (arrayObject[0] == 400 || arrayObject == null){
+        return <div>No favourites</div>
+    }
+
+
+    
+    
     
     return (
         <> {!simplified ? <div className = "search-crytpo">
-        <Input style = {{width : "80%", marginLeft : "0%"}}placeholder = "Search" onChange = {(e)=> setSearchTerm(e.target.value)}></Input>
     </div>
     : <div></div> }
-        
+        <h1>Favourites</h1>
+            <ReactTooltip />
             <Row gutters = {[8,8]} className = "crypto-card-container">
-
+            <Modal title="" visible={isModalVisible} okButtonProps={{ hidden: true }}
+          cancelButtonProps={{ hidden: true }} onOk={handleOk} onCancel={handleCancel}>
+                <Chart2 symbol = {symbol}></Chart2>
+            </Modal>
+            
                 {arrayObject?.map((stock)=> (
-                    <Col xs ={12} sm={8} lg={4} className ="crypto-card">
-                        <Button onClick={()=> xDel(stock.symbol)}>DELETE</Button>
-                        {
+                
+        
+                
+                <Col xs ={2} sm={2} lg={4} className ="crypto-card"> 
+                   
+                        <Button style = {{width:"50%"}}onClick={()=> xDel(stock.symbol)} data-tip="Delete from Favourites">
+                            <FontAwesomeIcon icon={faHeartCrack} />
+                        </Button>
+                    
+                        <Button style = {{width:"50%"}}onClick={()=>showModal(stock.symbol)} data-tip="View Chart">
+                            <LineChartOutlined></LineChartOutlined>
+                        </Button>
+                        
+                        
+                        {/*
                             arrayObject2?.map(element => {
-                                if (element.symbol == stock.symbol) {
+                                console.log(element)
+
+                                if (element==400){
+                                    return <div>Error</div>
+                                }
+                                if (element.meta?.symbol == stock.symbol) {
                                     element?.values?.forEach(element2 => {
                                         timestamp.push(element2.datetime)
                                         close.push(element2.close)
+                                        console.log(element2)
+
                                     })
+                                    let bri = timestamp;
+                                    let clo = close;
+                                    timestamp = []
+                                    close = []
                                     
-                                    return  <Chart symbol = {stock.symbol} timestamp = {stock.timestamp } close = {stock.close} />
+                                    return  <Chart style = {{width: "100vh"}} symbol = {stock.symbol} timestamp = {bri } close = {clo} />
                                 }
+                                
                             })
-                        }
+                        */}
                         <Link to = {`/stock/${stock.symbol}`}> 
                             <Card 
-                            title = { `${stock.symbol}`}
-                            >
-                                <p>
-                                    Symbol: {(stock.symbol)} <br/>
-                                    Previous Close: {(stock.close)} <br/>
+                                 style={{overflow:"visible"}} title = { `${stock.name} (${stock.symbol}) \n\n `}>
+                                      <div><b>{currencySymbol}{(stock.close*currencyX).toFixed(2)}</b></div>  
+                                <p><div>{(stock.percent_change > 0 ? <UpCircleOutlined  style = {{color: "green"}}/> : <DownCircleOutlined style = {{color: "red"}}/>)} {stock.percent_change}%</div>
+                               
                                     Change: {(stock.change)} <br/>
-                                    Change Percent: {(stock.percent_change)} <br/>
-                                    Volume: {(stock.volume)} <br/>
+                                    Change Percent: {(stock.percent_change)}% <br/>
+                                    Symbol: {(stock.symbol)} <br/>
+                                    Price: {currencySymbol}{(stock.close*currencyX)} <br/>
+
                                    
                                 </p>
                             </Card>

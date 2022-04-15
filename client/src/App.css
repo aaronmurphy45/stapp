@@ -124,6 +124,9 @@ a:hover{
       background-color: var(--bgSecondary);
       border: 1px black solid;
   }
+  .crypto-card{
+    width: 100%;
+  }
 
   .menu-control-container{
       display: block !important;
@@ -139,13 +142,14 @@ a:hover{
   }
   .show-more{
       font-size: 1.3rem !important;
+      padding: 5px;
+      /*box-shadow: 10px 10px 10px 10px #4285f4 ;*/
   }
 }
 
 
 
 .coin-heading-container{
-  border: 1px solid black;
 
   
  
@@ -298,6 +302,8 @@ padding: 0px 20px;
 }
 .news-card{
   min-height: 30px !important;
+  box-shadow: "0px 0px 5px #000000";
+  margin: 1%;
 }
 .news-image-container{
   display: flex !important;
@@ -350,8 +356,16 @@ width: 70%;
   justify-content: space-between;
   align-items: center;
   width: "100%";
-  margin-top: 40px;
+  margin-top: 10px;
   
+}
+@media screen and (max-width: 500px){
+  #newsd{
+    display: none;
+  }
+  #crypto-card {
+    min-width: 100%;
+  }
 }
 .show-more{
   margin-top: 0px !important;
@@ -373,10 +387,14 @@ width: 70%;
 .crypto-card{
 
   border-radius: 5px;
-  min-width: 250px;
+  min-width: 240px;
+ 
+  margin : 10px;
+  box-shadow: 3px 3px 3px 3px rgb(65,143,247);
 }
 .crypto-card .crypto-image{
-  width:35px;
+  width:135px;
+  z-index: 0;
 }
 .select-timeperiod{
   width: 200px !important;

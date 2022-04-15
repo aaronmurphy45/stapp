@@ -14,6 +14,8 @@ const app = firebase.initializeApp(firebaseConfig);
 const auth = app.auth();
 const db = app.firestore();
 
+
+
 const googleProvider = new firebase.auth.GoogleAuthProvider();
 
 const signInWithGoogle = async () => {
@@ -37,6 +39,7 @@ const signInWithGoogle = async () => {
     alert(err.message);
   }
 };
+
 
 const signInWithEmailAndPassword = async (email, password) => {
     try {
@@ -75,6 +78,13 @@ const registerWithEmailAndPassword = async (name, email, password) => {
 
   const logout = () => {
     auth.signOut();
+    // go to "/"
+    setTimeout(() => {
+      window.location.href = "/";
+    }, 2000);
+    
+   
+
   };
 
   export {

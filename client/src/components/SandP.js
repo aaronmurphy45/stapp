@@ -2,61 +2,55 @@ import React, {useState, useEffect} from 'react'
 import millify from 'millify'
 import { Link } from 'react-router-dom'
 import { Card, Row, Col, Input, Pagination, Button } from 'antd'
-import { useGetStocksQuery, useGetStockQuoteQuery, useGetStockPriceQuery } from '../services/stockListAPI'
-import NASDAQ2  from './LSE2'
-import { Spin } from 'antd';
-import { HeartFilled } from '@ant-design/icons'
-import { addFavourites } from '../services/favouritesActions'
-import { useAuthState } from 'react-firebase-hooks/auth'
-import { auth } from '../firebase/firebase-config'
-import { LineChartOutlined } from '@ant-design/icons'
+import { useGetStocksQuery, useGetStockQuoteQuery } from '../services/stockListAPI'
+import LSE2  from './LSE2'
 import Chart2 from './Chart2'
+import { addFavourites } from '../services/favouritesActions'
 import { Modal } from 'antd'
+import { auth } from '../firebase/firebase-config'
+import { useAuthState } from 'react-firebase-hooks/auth'
+import { LineChartOutlined } from '@ant-design/icons'
+import { HeartFilled } from '@ant-design/icons'
+
+
 
 //import { useGetStocksQuery } from '../services/yahooRecommmend';
 
-export default function LSE(state) {
+export default function SandP(state) {
     
    // const count = simplified ? 10: 100;
-    const [symbolx, setSymbolx] = useState("")
+    const [modalVisible, setModalVisible] = useState(false)
+    const [symbolx, setSymbolx] = useState('')
     const [country, setCountry] = React.useState("");
     const [exchange, setExchange] = React.useState("");
     const [searchTerm, setSearchTerm] = useState('');
-    const [symbol, setSymbol] = React.useState("AAPL,MSFT,AMZN,FB,GOOGL,GOOG,TSLA,TWTR");
+    const [symbol, setSymbol] = React.useState("SHEL,AZN,RIO,BP,HSBA,VOD");
     const [stocks, setStocks ] = React.useState([])
-    const [modalVisible, setModalVisible] = useState(false);
     const [currentarray, setCurrentarray] = React.useState();
     const [simplified, setSimplified] = React.useState(false);
-    const { data , loading, error2} = useGetStockPriceQuery("NDAQ")
-
-
     state = {
         current: 3,
       };
     
     const format = "json";
     var array = [];
-    var {data :stocksList, isFetching } = useGetStockQuoteQuery(symbol);
-    const {data: nasdaq , isFetching2, error} = useGetStockQuoteQuery("NDAQ");
+    var {data :stocksList, isFetching, error } = useGetStockQuoteQuery(symbol);
     //const {data :stocksList, isFetching } = useGetStocksQuery({country, symbol, format, type});
-      
+   
     if (!isFetching){
   
-
-
         array = Object.values(stocksList)
+   
         stocksList = array
- 
+   
 
-    
-        
     //console.log(data)
 
     //const isFetching = false;
    // const stocksList=[]
     //const isFetching = false;
     //const stocksList = ["123", "456", "789"];
-
+    
     
    
     if (!isFetching) {
@@ -78,14 +72,13 @@ export default function LSE(state) {
     
 
 
-    
 
     
 
     const onChange = page => {
-   
-        setCurrentarray(chunkedStocks[page-1])
 
+        setCurrentarray(chunkedStocks[page-1])
+   
         
       };
         
@@ -369,13 +362,11 @@ export default function LSE(state) {
     },
     ])
     */
-
-   
     
     
 
     if (simplified){
-       
+   
 
     //console.log(data)
 
@@ -388,16 +379,7 @@ export default function LSE(state) {
    
     
     }
-    const onChange = page => {
-
-        setCurrentarray(chunkedStocks[page-1])
-
-        
-      };
-
-    const ChangeView  = () => {
-        setSimplified(!simplified)
-    }
+    
 
     const handleOk = () => {
         setModalVisible(false);
@@ -416,14 +398,16 @@ export default function LSE(state) {
     };
 
     
+  
+    const ChangeView  = () => {
+        setSimplified(!simplified)
+    }
+
     const xAdd = (e) => {
-       
+        
         addFavourites(e,uid)
         
     }
-
-    
-
 
 
 
@@ -440,38 +424,26 @@ export default function LSE(state) {
 
 
     }, [stocksList, searchTerm])
-  
     
     if (isFetching){
-        return <Spin></Spin>
+        return 'Loading...'
     }
+    if(error){
+        return (
+            <div> <h1>Error</h1>
+                </div>
+        )
+        }
     return (
         <> 
 
-            {simplified ? <NASDAQ2></NASDAQ2> :  <div>
-          
+            {simplified ? <LSE2></LSE2> :  <div>
+            <Input placeholder = "Search" onChange = {(e)=> setSearchTerm(e.target.value)}></Input>
             <Modal title="" visible={modalVisible} okButtonProps={{ hidden: true }}
                 cancelButtonProps={{ hidden: true }} onOk={handleOk} onCancel={handleCancel}>
                 <Chart2 symbol = {symbolx}></Chart2>
             </Modal>
-            <div style = {{width:"60%", background:"white", alignItems:"center", textAlign:"center", padding:"10px", margin:"10px", boxShadow:"0px 0px 10px black"}}>
-                <div style = {{width: "50%"}}>
-                 <Chart2 kag symbol = {"NDAQ"}></Chart2>
-                </div>
-                <div style = {{width: "50%", }}>
-                    <h1>
-                    Live NASDAQ price : {data?.price}
-                    </h1>
-                </div>
-           </div>
-            <div>
-
-
-            </div>
-            <h1>NASDAQ STOCKS</h1>
             <Row gutters = {[32,32]} className = "crypto-card-container">
-           
-           
                 {currentarray?.map((stock)=> (
                     <Col xs ={24} sm={12} lg={6} className ="crypto-card" key ={stock.id}>
                         <Button  style = {{width:"50%"}} onClick={()=> xAdd(stock.symbol)} data-tip="Add to Favourites">

@@ -5,10 +5,11 @@ import { Routes, Route , Link } from "react-router-dom"
 
 import { Layout, Typography, Space } from 'antd';
 
+
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 import 'firebase/compat/auth';
-import {NavBar, NavBar2, Homepage,User, Exchanges,Favourites,StockDetails,StockDetails2, Cryptocurrencies,Root, CryptoDetails , CryptoNews , Stocks,StockNews, NASDAQ, MostPopular, NYSE, LSE, SidePanelNews} from "./components/index"
+import {NavBar, NavBar2, Homepage,User,SearchBar,SandP,Favourites,StockDetails,Reset,StockDetails2, Cryptocurrencies,Root, CryptoDetails , CryptoNews , Stocks,StockNews, NASDAQ, MostPopular, NYSE, LSE, SidePanelNews} from "./components/index"
 
 
 import Login from './components/Login';
@@ -21,6 +22,7 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import HighChange from './components/HighChange';
 import { LowChange } from './components';
 import { useEffect } from 'react';
+
 // Initialize Firebase
 //const app = initializeApp(firebaseConfig);
 //const analytics = getAnalytics(app);
@@ -72,12 +74,15 @@ function App() {
           <Route exact path="/" element={<  Root />} />
           <Route exact path="/login" element={<Login></Login>} />
           <Route exact path="/register" element={<Register/>} />
+          <Route exact path = "/reset" element={<div><Reset></Reset></div>}></Route>
+          <Route path="/*" element={<Root></Root>} />
         </Routes>
       </div> : <div>
       <div className = "navbar">
           
           <NavBar2 user = {user}></NavBar2>
           <NavBar></NavBar>
+          <SearchBar></SearchBar>
           
           
       </div>
@@ -86,7 +91,9 @@ function App() {
             <div className = "routes">
               <Routes>
                 <Route exact path="/" element={<Root />} />
+                <Route path="/*" element={<Login></Login>} />
                   <Route path = "homepage" element = {<div><Homepage></Homepage><SidePanelNews simplified></SidePanelNews></div>}>
+          
 
                   </Route>
                   <Route exact path = "/NASDAQ" element = {<div><NASDAQ></NASDAQ><SidePanelNews></SidePanelNews></div>}>
@@ -95,34 +102,40 @@ function App() {
                   </Route>
                   <Route exact path = "/LSE" element={<div><LSE></LSE><SidePanelNews></SidePanelNews></div>}>
                   </Route>
-                  <Route exact path = "/highchange" element={<HighChange></HighChange>}>
+                  <Route exact path = "/SandP" element={<div><SandP></SandP><SidePanelNews></SidePanelNews></div>}>
+                  </Route>
+                  <Route exact path = "/highchange" element={<div><HighChange></HighChange><SidePanelNews></SidePanelNews></div>}>
                   </Route>
                   <Route exact path = "/favourites" element={<div><Favourites></Favourites><SidePanelNews simplified = {false}></SidePanelNews></div>}>
                   </Route>
-                  <Route exact path = "/lowchange" element={<LowChange></LowChange>}>
+                  <Route exact path = "/lowchange" element={<div><LowChange></LowChange><SidePanelNews></SidePanelNews></div>}>
                   </Route>
-                  <Route exact path = "/mostpopular" element={<MostPopular></MostPopular>}>
+                  <Route exact path = "/mostpopular" element={<div><MostPopular></MostPopular><SidePanelNews simplified = {false}></SidePanelNews></div>}>
                   </Route>
-                  <Route exact path = "/stocks" element={<Stocks></Stocks>}>
+                  <Route exact path = "/stocks" element={<div><Stocks></Stocks><SidePanelNews simplified = {false}></SidePanelNews></div>}>
                   </Route>
-                  <Route exact path = "/exchanges" element={<Exchanges></Exchanges>}>
+                  <Route exact path = "/cryptocurrencies" element = {<div><Cryptocurrencies></Cryptocurrencies><SidePanelNews simplified = {false}></SidePanelNews></div>}>
                   </Route>
-                  <Route exact path = "/cryptocurrencies" element = {<Cryptocurrencies></Cryptocurrencies>}>
-                  </Route>
-                  <Route exact path = '/crypto/:coinId' element = {<CryptoDetails></CryptoDetails>}>
+                  <Route exact path = '/crypto/:coinId' element = {<div><CryptoDetails></CryptoDetails><SidePanelNews simplified = {false}></SidePanelNews></div>}>
                   </Route>
                   <Route exact path = '/stock/:stockId' element = {<div><StockDetails2></StockDetails2></div>}>
                   </Route>
-                  <Route exact path = "/cryptonews" element = {<CryptoNews></CryptoNews>}>
+                  <Route exact path = "/cryptonews" element = {<div><CryptoNews></CryptoNews><SidePanelNews simplified = {false}></SidePanelNews></div>}>
                   </Route>
-                  <Route exact path = "/stocknews" element = {<CryptoNews></CryptoNews>}>
+                  <Route exact path = "/stocknews" element = {<div><StockNews></StockNews><SidePanelNews simplified = {false}></SidePanelNews></div>}>
                   </Route>
-                  <Route exact path = "/predictor" element = {<FileUpload></FileUpload>} ></Route>
-                  <Route exact path = "/user" element = {<User style = {{width: "100%"}}></User>}>
+                  <Route exact path = "/predictor" element = {<div><FileUpload></FileUpload><SidePanelNews simplified = {false}></SidePanelNews></div>}>
                   </Route>
-                  <Route path="*" element={<h1>Page not Found</h1>} />
+                  <Route exact path = "/user" element = {<div></div>}>
+                  </Route>
+
+                  <Route path="/*" element={<h1>Page not Found</h1>} />
               </Routes>
             </div>
+            <Routes>
+            <Route exact path = "/user" element = {<User style = {{width: "100%"}}></User>}>
+                  </Route>
+            </Routes>
           </Layout>
 
       <div style = {footerStyle}>

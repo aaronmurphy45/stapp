@@ -18,6 +18,8 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { Link, useNavigate } from "react-router-dom";
 import { useGetStockSparkQuery, useGetStocksTrendingQuery, useGetStockQuoteQuery } from '../services/yahooRecommmend'
 
+import { useGetTrendingQuery } from '../services/yhFin'
+
 import { auth } from "../firebase/firebase-config";
 
 import {trending} from './aJSON/trending'
@@ -27,7 +29,11 @@ import {crypto} from './aJSON/crypto'
 export default function NavBar2(props) {
 
      
-   
+    //const { data : getTrending , isFetching } = useGetTrendingQuery();
+    const getTrending = trending;
+    const [isFetching, setIsFetching] = useState(false);
+
+    
     const count = 100;
    
     //cryptos
@@ -42,32 +48,14 @@ export default function NavBar2(props) {
 
     let stocksa = "";
     if (stockArrary.length == 0){
-    //const stocksx = stocks?.finance?.result[0]?.quotes?.forEach((stock)=> (
-    const stocksx = stocks?.data?.coins.forEach((stock)=> (    
-        stockArrary.push(stock.symbol)
+    const stocksx = getTrending?.finance?.result[0]?.quotes?.forEach((stock)=> (
+    //const stocksx = stocks?.data?.coins.forEach((stock)=> (    
+        stockArrary.push(stock)
         //stocksa = stocksa + stock.symbol + "," 
-        
-        
-        
+
     ))}
 
 
-        
-
-    var vi = 0;
-    while (vi < 3) {
-        
-
-        if (vi == 2) {
-            stocksa = stocksa + stockArrary[vi]
-            vi++;
-            
-        } 
-        else {
-        stocksa = stocksa + stockArrary[vi] + ","
-        vi++;
-        }
-    }
 
 
 
@@ -81,11 +69,7 @@ export default function NavBar2(props) {
 
  
 
-    if (spark){
-        var arrayObject = Object.values(spark)
-    }
- 
-
+  
     
    /*
    const [region, setRegion] = React.useState("US");
@@ -190,15 +174,18 @@ export default function NavBar2(props) {
     
     const barstyle = {
 
-        borderBottom: "3px solid rgb(65,143,247)",
         paddingTop: "10px",
         backgroundColor: "rgb(65,143,247)",
         width: "100%",
+        padding: "10px",
         alignItems: "horizontal",
         height: "100px",
         fontSize: "5px",
         textAlign: "center",
-        color: "white",
+        color: "black",
+        overflow: "hidden",
+        boxShadow: '0px 0px 5px #000000',
+        marginBottom: "5px",
         
 
     }
@@ -212,6 +199,7 @@ export default function NavBar2(props) {
         paddingTop: "10px",
         paddingBottom: "10px",
         borderBottom: "3px solid rgb(65,143,247)",
+        
     }
     const linkcol2 = {
         color: "white",
@@ -229,16 +217,25 @@ export default function NavBar2(props) {
         minWidth: "100px",
         display: "inline-block",
         marginLeft: "1%",
+        paddingTop: "10px",
         padding : "10px",
-        border: "1px solid black",
+        marginTop: "10px",
         borderRadius: "5px",
         backgroundColor : "white",
-        marginBottom: "30px",
+        boxShadow: '0px 0px 5px #000000',
+        overflow: "hidden",
+       
     }
+
     const textstyle = {
+        width: "100%",
+        textAlign: "center",
+        height: "100%",
         color: colorx,
+        backgroundColor: "white",
         borderColor: colorx,
         display: "inline-block",
+        
     }
     const textstyle2 = {
         color: colory,
@@ -263,6 +260,7 @@ export default function NavBar2(props) {
         display: "inline-block",
     }
     const textstyle6 = {
+
         color: colorc,
         borderColor: colorc,
         display: "inline-block",
@@ -274,18 +272,29 @@ export default function NavBar2(props) {
        
     }
     const account = {
-       
-       top : "0px",
-       right : "0px",
+       top : "20px",
+       right : "10px",
+       height: "80px",
        position : "absolute",
-        
+       padding : "0px 5px",
+       boxShadow: '0px 0px 5px #000000',
+       borderRadius: "5px",
+       backgroundColor: "rgb(65,143,247)",
+       border: "1px solid rgb(65,143,247)",
 
     }
 
     const logo = {
         left: "10px",
-        top: "10px",
+        top: "20px",
+        backgroundColor: "rgb(65,143,247)",
+        height: "80px",
         position: "absolute",  
+        overflow: "underline",
+        boxShadow: '0px 0px 5px #000000',
+        padding: "0px 5px",
+        borderRadius: "5px",
+        border: "1px solid rgb(65,143,247)",
     }
 
 
@@ -297,6 +306,55 @@ useEffect(() => {
   
         
         const interval = setInterval(() => {
+
+            let obj = {
+                name: stockArrary[z]?.shortName,
+                price: stockArrary[z]?.price,
+                change: stockArrary[z]?.regularMarketChangePercent,
+            }
+            let obj2 = {
+                name: stockArrary[z+1]?.shortName,
+                price: stockArrary[z+1]?.regularMarketPrice,
+                change: stockArrary[z+1]?.regularMarketChangePercent,
+            }
+            let obj3 = {
+                name: stockArrary[z+2]?.shortName,
+                price: stockArrary[z+2]?.regularMarketPrice,
+                change: stockArrary[z+2]?.regularMarketChangePercent,
+            }
+            let obj4 = {
+                name: stockArrary[z+3]?.shortName,
+                price: stockArrary[z+3]?.regularMarketPrice,
+                change: stockArrary[z+3]?.regularMarketChangePercent,
+            }
+            let obj5 = {
+                name: stockArrary[z+4]?.shortName,
+                price: stockArrary[z+4]?.regularMarketPrice,
+                change: stockArrary[z+4]?.regularMarketChangePercent,
+            }
+            let obj6 = {
+                name: stockArrary[z+5]?.shortNname,
+                price: stockArrary[z+5]?.regularMarketPrice,
+                change: stockArrary[z+5]?.regularMarketChangePercent,
+            }
+            let obj7 = {
+                name: stockArrary[z+6]?.shortName,
+                price: stockArrary[z+6]?.regularMarketPrice,
+                change: stockArrary[z+6]?.regularMarketChangePercent,
+            }
+            setCurrentstock(obj)
+            setCurrentstock2(obj2)
+            setCurrentstock3(obj3)
+            setCurrentstock4(obj4)
+            setCurrentstock5(obj5)
+            setCurrentstock6(obj6)
+            setCurrentstock7(obj7)
+            z = z + 1
+            if (z+6 == stockArrary.length) {
+                z = 0
+            }
+           
+            /*
             
             let obj = {
                 name: stocks?.data?.coins[z].name,
@@ -334,7 +392,7 @@ useEffect(() => {
                 price: stocks?.data?.coins[z+6].price,
                 change: stocks?.data?.coins[z+6].change
             }
-            
+            */
             if (obj.change > 0) {
                 setColorx("green")
             }
@@ -388,12 +446,7 @@ useEffect(() => {
             setCurrentstock7(obj7);
 
          
-            if (z>96) {
-                z = 0
-            }
-            else {
-                z++;
-            }
+            
             
         
         
@@ -401,10 +454,9 @@ useEffect(() => {
     
         return () => clearInterval(interval);
 
-     }, []);
+     }, [getTrending]);
     
      
-   
     
 
     // This nav bar will be a conatntly rotationg navbar oif the stocks and prices
@@ -424,46 +476,46 @@ useEffect(() => {
            <div className="moveleft" style = {blockstyle}>
             <h1 style = {textstyle}> {currentstock.change < 0 ? <CaretDownOutlined style = {{color: "red"}} /> : <CaretUpOutlined style = {{color: "green"}} />}  {currentstock.name}</h1>
             <br/>
-            <h1 style={textstyle}>{parseFloat(currentstock.price).toFixed(4)}</h1>
+            <h1 style={textstyle}>{parseFloat(currentstock.price).toFixed(2)}</h1>
            
             </div>
       
             <div className="moveleft" style = {blockstyle}>
             <h1 style = {textstyle2}> {currentstock2.change < 0 ? <CaretDownOutlined style = {{color: "red"}} /> : <CaretUpOutlined style = {{color: "green"}} />}  {currentstock2.name}</h1>
             <br/>
-            <h1 style={textstyle2}>{parseFloat(currentstock2.price).toFixed(4)}</h1>
+            <h1 style={textstyle2}>{parseFloat(currentstock2.price).toFixed(2)}</h1>
             </div>
         
             <div className="moveleft" style = {blockstyle}>
             <h1 style = {textstyle3}> {currentstock3.change < 0 ? <CaretDownOutlined style = {{color: "red"}} /> : <CaretUpOutlined style = {{color: "green"}} />}  {currentstock3.name}</h1>
             <br/>
-            <h1 style={textstyle3}>{parseFloat(currentstock3.price).toFixed(4)}</h1>
+            <h1 style={textstyle3}>{parseFloat(currentstock3.price).toFixed(2)}</h1>
            
             </div>
 
             <div className="moveleft" style = {blockstyle}>
             <h1 style = {textstyle4}> {currentstock4.change < 0 ? <CaretDownOutlined style = {{color: "red"}} /> : <CaretUpOutlined style = {{color: "green"}} />}  {currentstock4.name}</h1>
             <br/>
-            <h1 style={textstyle4}>{parseFloat(currentstock4.price).toFixed(4)}</h1>
+            <h1 style={textstyle4}>{parseFloat(currentstock4.price).toFixed(2)}</h1>
             </div>
 
             <div className="moveleft" style = {blockstyle}>
             <h1 style = {textstyle5}> {currentstock5.change < 0 ? <CaretDownOutlined style = {{color: "red"}} /> : <CaretUpOutlined style = {{color: "green"}} />}  {currentstock5.name}</h1>
             <br/>
-            <h1 style={textstyle5}>{parseFloat(currentstock5.price).toFixed(4)}</h1>
+            <h1 style={textstyle5}>{parseFloat(currentstock5.price).toFixed(2)}</h1>
             </div>
         
 
             <div className="moveleft" style = {blockstyle}>
             <h1 style = {textstyle6}> {currentstock6.change < 0 ? <CaretDownOutlined style = {{color: "red"}} /> : <CaretUpOutlined style = {{color: "green"}} />}  {currentstock6.name}</h1>
             <br/>
-            <h1 style={textstyle6}>{parseFloat(currentstock6.price).toFixed(4)}</h1>
+            <h1 style={textstyle6}>{parseFloat(currentstock6.price).toFixed(2)}</h1>
             </div>
 
             <div className="moveleft" style = {blockstyle}>
             <h1 style = {textstyle7}> {currentstock7.change < 0 ? <CaretDownOutlined style = {{color: "red"}} /> : <CaretUpOutlined style = {{color: "green"}} />}  {currentstock7.name}</h1>
             <br/>
-            <h1 style={textstyle7}>{parseFloat(currentstock7.price).toFixed(4)}</h1>
+            <h1 style={textstyle7}>{parseFloat(currentstock7.price).toFixed(2)}</h1>
             </div>
 
             <div className='usericon' style = {account}>

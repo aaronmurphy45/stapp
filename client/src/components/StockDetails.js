@@ -47,7 +47,7 @@ export default function StockDetails() {
 
     
     
-    console.log(stockId)
+
     PageDecider(stockId);
     addRecent(stockId)
     const [likes, setLikes] = useState(0);
@@ -179,7 +179,7 @@ export default function StockDetails() {
         float: 'left',
     }
     function callback(key) {
-        console.log(key);
+        
       }
     const textStyle = {
         width: '40%',
@@ -205,10 +205,10 @@ export default function StockDetails() {
     var stappsr;
 
     const stappsrating = stappsRating({eps: stockDetails.epsCurrentYear, ptb: stockDetails.priceToBook})
-    if (stappsrating < 25) {
-        stappsr = <UpCircleOutlined style = {{color: '#52c41a'}}/>
+    if (stappsrating) {
+        stappsr = <DownOutlined style = {{color: '#f5222d'}}/>
     }else if (stappsrating < 50) {
-        stappsr = <UpCircleOutlined style = {{color: '#faad14'}}/>
+        stappsr = <DownOutlined style = {{color: '#f5222d'}}/>
     } else {
         stappsr = <DownOutlined style = {{color: '#f5222d'}}/>
     }

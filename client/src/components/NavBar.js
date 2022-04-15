@@ -22,45 +22,59 @@ export default function NavBar(props) {
     }
 
     const handleClick = e => {
-        console.log('click ', e);
+        
         this.setState({ current: e.key });
       };
+
+    const linkStyle = {
+      
+      color: "black",
+      //textDecoration: "bold",
+      //fontSize: "20px",
+      //fontWeight: "bold",
+    }
     
     
     return (
 
         <div>
            <Menu onClick={handleClick} selectedKeys={[current]} mode="horizontal">
-         <Link to="/homepage">
-            <Menu.Item key="home" icon = {<HomeOutlined></HomeOutlined>}>
+         <Link style = {linkStyle} to="/homepage">
+            <Menu.Item key="home" style = {linkStyle}  icon = {<HomeOutlined></HomeOutlined>}>
                   Home
             </Menu.Item>
             </Link>
-        <Link to = "/favourites">
-        <Menu.Item key="app" icon={<AppstoreOutlined />}>
+        <Link style = {linkStyle} to = "/favourites">
+        <Menu.Item key="app" style = {linkStyle} icon={<AppstoreOutlined />}>
             Favourites
         </Menu.Item>
         </Link>
-        <Link to = "/mostpopular">
-        <Menu.Item key="app" icon={<StockOutlined />}>
+        <Link style = {linkStyle} to = "/mostpopular">
+        <Menu.Item key="app" style = {linkStyle} icon={<StockOutlined />}>
             Most Popular
         </Menu.Item>
         </Link>
         
         <SubMenu key="SubMenu" icon={<SettingOutlined />} title="Markets">
           <Menu.ItemGroup title="Item 1">
-            <Link to = "LSE"><Menu.Item key="setting:1">London Stock Exchange</Menu.Item></Link>
-            <Link to = "NASDAQ"><Menu.Item key="setting:2">NASDAQ</Menu.Item></Link>
-            <Link to = "NYSE"><Menu.Item key="setting:3">NYSE</Menu.Item></Link>
-            <Menu.Item key="setting:4">S&P 500</Menu.Item>
+            <Link style = {linkStyle} to = "LSE"><Menu.Item key="setting:1">London Stock Exchange</Menu.Item></Link>
+            <Link style = {linkStyle} to = "NASDAQ"><Menu.Item key="setting:2">NASDAQ</Menu.Item></Link>
+            <Link style = {linkStyle} to = "NYSE"><Menu.Item key="setting:3">NYSE</Menu.Item></Link>
+            <Link style = {linkStyle} to = "SandP"><Menu.Item key="setting:4">S&P 500</Menu.Item></Link>
+            {/*}
             <Menu.Item key="setting:5">Dow Jones</Menu.Item>
+            */}
           </Menu.ItemGroup>
           <Menu.ItemGroup title="Other Markets">
-            <Menu.Item key="setting:6">CryptoCurrencies</Menu.Item>
+            <Link  style = {linkStyle }to=  "cryptocurrencies">
+              <Menu.Item key="setting:6">Cryptocurrencies</Menu.Item>
+            </Link>
+             {/*
             <Menu.Item key="setting:7">Forex</Menu.Item>
             <Menu.Item key="setting:8">Commodities</Menu.Item>
             <Menu.Item key="setting:9">Bonds</Menu.Item>
             <Menu.Item key="setting:10">NFT's</Menu.Item>
+            */}
           </Menu.ItemGroup>
         </SubMenu>
         

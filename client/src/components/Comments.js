@@ -20,6 +20,8 @@ export function Comments(props){
 
     var commentx;
     var likes, dislikes=0;
+    var commentlikes;
+    var commentdislikes;
     
 
     var arrayObj = [];
@@ -41,7 +43,7 @@ export function Comments(props){
     
 
     useEffect(() => {
-      console.log("useEffect")
+  
         setLikesx(likes)
         setDislikesx(dislikes)
         
@@ -53,15 +55,17 @@ export function Comments(props){
 
     const commentStyle = {
       backgroundColor: "white",
-      borderRadius: "5px",
+      borderRadius: "15px",
       padding: "10px",
       margin: "10px",
       width: "100%",
       boxShadow: "0px 0px 5px 0px rgba(0,0,0,0.75)",
       border: "1px solid #e8e8e8",
       fontSize: "14px",
-      alignItems: "center",
+     fontWeight: "bold",
+
     }
+
     const commentAuthStyle = {
       color: 'black',
       fontSize: '12px',
@@ -106,7 +110,7 @@ function addLike(id, stock){
    const db = dbs.ref(`Comments/-MytAFz50QIeqIL1QLaf/${stock}`)
    db.once('value', function(snapshot) {
        var comments = snapshot.val()
-       console.log(comments)
+      
        for (var key in comments) {
            if (comments[key].id == id) {
                comments[key].likes += 1
@@ -117,7 +121,7 @@ function addLike(id, stock){
    })
 }
 function removeLike(id, stock){
-   console.log(stock)
+
    const db = dbs.ref(`Comments/-MytAFz50QIeqIL1QLaf/${stock}`)
    db.once('value', function(snapshot) {
        var comments = snapshot.val()
@@ -133,7 +137,6 @@ function removeLike(id, stock){
 }
 
 function addDislike({id, stock}){
-
    const db = dbs.ref(`Comments/-MytAFz50QIeqIL1QLaf/${stock}`)
    db.once('value', function(snapshot) {
        var comments = snapshot.val()
@@ -141,7 +144,7 @@ function addDislike({id, stock}){
        for (var key in comments) {
            if (comments[key].id == id) {
                comments[key].dislikes += 1
-               console.log("called")
+         
                db.set(comments)
            }   
        }
@@ -168,29 +171,23 @@ function removeDislike({id, stock}){
 
 
 
-const getLike = (id, stock) => {
+function getLike({id, stock}){
    
    const db = dbs.ref(`Comments/-MytAFz50QIeqIL1QLaf/${stock}`)
    db.once('value', function(snapshot) {
        const comments = snapshot.val()
-  
-       
        for (var key in comments) {
            if (comments[key].id == id) {
-
-                likes = comments[key].likes
-               
                return comments[key].likes
            }
        }
    })
 }
 
- function getDislike(id, stock){
+ function getDislike({id, stock}){
    const db = dbs.ref(`Comments/-MytAFz50QIeqIL1QLaf/${stock}`)
     db.once('value', function(snapshot) {
-       const comments = snapshot.val()
-
+       const comments = snapshot.val();
         for (var key in comments) {
            if (comments[key].id == id) {
                return comments[key].dislikes
@@ -199,16 +196,16 @@ const getLike = (id, stock) => {
    })
 }
 
-useEffect(() => {
- 
-    setLikesx(likes)
-    setDislikesx(dislikes)
-    
-    
-}, [commentx])
+if (comments.length == 0) {
+    return <div style={{textAlign: "center"}}>No comments yet. <br/> Be the first to comment.</div>
+}
 
 
-
+const likestyles = {
+    fontSize: "12px",
+    color: "black",
+    margin: "10px",
+}
 
 
     return (
@@ -219,33 +216,48 @@ useEffect(() => {
 
           {!(comments === null || comments === undefined) ? 
           comments.map(comment => {
-
-                commentx = comment.id
-              
-                likes = getLike(commentx, sss)
-                dislikes = getDislike(commentx, sss)
-              
-
+                 
+               
+                
+                const db = dbs.ref(`Comments/-MytAFz50QIeqIL1QLaf/${sss}`)
+                db.once('value', function(snapshot) {
+                    const comments = snapshot.val()
+         
+                    for (var key in comments) {
+                      
+                        if (comments[key].id == comment.id) {
+                            commentlikes = comments[key].likes
+                            commentdislikes = comments[key].dislikes
+                        }
+                    }
+                })
+               
                 return (
                     
               <Comment style ={commentStyle}
+            /*
               actions={
                 [
+                    <span style={likestyles}>
                   <Tooltip key="comment-basic-like" title="Like">
-                  <span onClick={()=>addLike(commentx, sss)}>
+                  <span onClick={()=>addLike({id: commentx, stock: sss})}>
                       {createElement(action === 'liked' ? LikeFilled : LikeOutlined)}
-                      <span className="comment-action"><p>Likes: {likesx}</p></span>
+                      <span className="comment-action"><p>Likes: {getLike({id:comment.id ,stock: sss})}</p></span>
                   </span>
-                  </Tooltip>,
+                  </Tooltip>
+                    </span>,
+                    <span style={likestyles}>
                   <Tooltip key="comment-basic-dislike" title="Dislike">
-                  <span onClick={()=> addDislike(commentx, sss)}>
+                  <span onClick={()=> addDislike({id: comment.id, stock: sss})}>
                       {React.createElement(action === 'disliked' ? DislikeFilled : DislikeOutlined)}
-                      <span className="comment-action"><p>DisLikes: {()=> getDislike(comment.id, sss)}</p></span>
+                      <span className="comment-action"><p>DisLikes: {commentdislikes}</p></span>
 
                   </span>
                   </Tooltip>
+                  </span>
                 ]
               }
+                */
               author={<a>{comment.author}</a>}
               content={
                 <p>
@@ -253,8 +265,8 @@ useEffect(() => {
                 </p>
               }
               datetime={
-                <Tooltip title={moment(comment.date).format('YYYY-MM-DD HH:mm:ss')}>
-                  <span>{moment().fromNow()}</span>
+                <Tooltip title={moment(comment?.date).format('YYYY-MM-DD HH:mm:ss')}>
+                  <span>{moment(comment?.date).fromNow()}</span>
                 </Tooltip>
               }
             />

@@ -79,9 +79,8 @@ export default function Login({simplified}) {
 
     // if enter button is clicked 
     const handleEnter = (event) => {
-        console.log(event.keyCode)
+        
         if (event.key === 'Enter') {
-          console.log("enter")
             signInWithEmailAndPassword(email, password)
         }
     }

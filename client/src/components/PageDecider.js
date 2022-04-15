@@ -8,7 +8,7 @@ var currentStock = "Stock Market";
 
 const PageDecider = () => {
   const data = useParams();
-  console.log(data);
+
   currentStock = data
 }
 

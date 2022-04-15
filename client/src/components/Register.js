@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { Link, useNavigate } from "react-router-dom";
+import { Input, Button } from "antd";
 import {
   auth,
   registerWithEmailAndPassword,
@@ -27,36 +28,40 @@ function Register({simplified}) {
     return (
       <div>
         <h1>Register</h1>
-        <input
+        <Input
           type="text"
           className="register__textBox"
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Full Name"
         />
-        <input
+         <br/>
+        <Input
           type="text"
           className="register__textBox"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="E-mail Address"
         />
-        <input
+         <br/>
+        <Input
           type="password"
           className="register__textBox"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Password"
         />
-        <button className="register__btn" onClick={register}>
+        <br/>
+        <Button className="register__btn" onClick={register}>
           Register
-        </button>
-        <button
+        </Button>
+        <br/>
+        <Button
           className="register__btn register__google"
           onClick={signInWithGoogle}
         >
           Register with Google
-        </button>
+        </Button>
         <div>
           Already have an account? <Link to="/login">Login</Link> now.
         </div>

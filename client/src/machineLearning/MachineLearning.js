@@ -3,6 +3,7 @@
 import React from 'react'
 import { useGetStockBusinessDetailsQuery, useGetStocksQuery } from '../services/yahooRecommmend'
 import { useGetPredictQuery } from '../services/pricePrediction'
+import { Spin } from 'antd';
 
 
 
@@ -12,11 +13,16 @@ export default function MachineLearn(props) {
   console.log(props)
 
   console.log(props.symbol)
+  console.log(props.use)
+  console.log(props.save)
   console.log(props.epochs)
 
-  const { data, isFetching } = useGetPredictQuery({epochs: props.epochs, symbol: props.symbol, numOfDays: props.numOfDays})
+  const { data, isFetching, error } = useGetPredictQuery({epochs: props.epochs, symbol: props.symbol, numOfDays: props.numOfDays, use: props.use, save: props.save, diffdate: props.diffdate})
   
- 
+   if (error){
+    console.log(error)
+    return <div>Error</div>
+  }
 
   /*
   const { datax, isFetching } = useGetStockBusinessDetailsQuery({ symbol: "BTC/USD" })
@@ -81,7 +87,7 @@ export default function MachineLearn(props) {
   */
 
   if (isFetching) {
-    return 'Loading...'
+    return <><Spin></Spin> <div> "Loading... Please be Patient"</div></>
   }
   
   return (

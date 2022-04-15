@@ -48,7 +48,6 @@ const firebaseConfig = {
     authDomain: "final-year-project-f2fb9.firebaseapp.com",
     projectId: "final-year-project-f2fb9",
     storageBucket: "final-year-project-f2fb9.appspot.com",
-    
     messagingSenderId: "1035660284773",
     appId: "1:1035660284773:web:176af23ca11e14653f878c",
     measurementId: "G-16NEZZEG6Y",
@@ -66,6 +65,16 @@ const signInWithEmailAndPassword = async (email, password) => {
 
   try {
     await auth.signInWithEmailAndPassword(email, password);
+  } catch (err) {
+    console.error(err);
+    alert(err.message);
+  }
+};
+
+// save tio firebase
+const saveToFirebase = async (data) => {
+  try {
+    await db.collection("users").add(data);
   } catch (err) {
     console.error(err);
     alert(err.message);

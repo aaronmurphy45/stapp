@@ -1,95 +1,28 @@
 import React, {useState, useEffect} from 'react'
 import millify from 'millify'
 import { Link } from 'react-router-dom'
-import { Card, Row, Col, Input, Pagination, Button } from 'antd'
-import { useGetStocksQuery, useGetStockQuoteQuery, useGetStockPriceQuery } from '../services/stockListAPI'
-import NASDAQ2  from './LSE2'
-import { Spin } from 'antd';
-import { HeartFilled } from '@ant-design/icons'
-import { addFavourites } from '../services/favouritesActions'
-import { useAuthState } from 'react-firebase-hooks/auth'
-import { auth } from '../firebase/firebase-config'
-import { LineChartOutlined } from '@ant-design/icons'
-import Chart2 from './Chart2'
-import { Modal } from 'antd'
-
+import { Card, Row, Col, Input, Pagination } from 'antd'
+import { useGetStocksQuery, useGetStockQuoteQuery } from '../services/stockListAPI'
 //import { useGetStocksQuery } from '../services/yahooRecommmend';
 
-export default function LSE(state) {
-    
+export default function LSE2(state) {
+
    // const count = simplified ? 10: 100;
-    const [symbolx, setSymbolx] = useState("")
     const [country, setCountry] = React.useState("");
-    const [exchange, setExchange] = React.useState("");
+    const [exchange, setExchange] = React.useState("S&P");
     const [searchTerm, setSearchTerm] = useState('');
-    const [symbol, setSymbol] = React.useState("AAPL,MSFT,AMZN,FB,GOOGL,GOOG,TSLA,TWTR");
-    const [stocks, setStocks ] = React.useState([])
-    const [modalVisible, setModalVisible] = useState(false);
-    const [currentarray, setCurrentarray] = React.useState();
-    const [simplified, setSimplified] = React.useState(false);
-    const { data , loading, error2} = useGetStockPriceQuery("NDAQ")
+    const [symbol, setSymbol] = React.useState("");
 
-
+    const [type, setType] = React.useState("");
     state = {
         current: 3,
       };
     
     const format = "json";
-    var array = [];
-    var {data :stocksList, isFetching } = useGetStockQuoteQuery(symbol);
-    const {data: nasdaq , isFetching2, error} = useGetStockQuoteQuery("NDAQ");
-    //const {data :stocksList, isFetching } = useGetStocksQuery({country, symbol, format, type});
-      
-    if (!isFetching){
-  
-
-
-        array = Object.values(stocksList)
-        stocksList = array
- 
+    
+    const {data :stocksList, isFetching } = useGetStocksQuery({country, symbol, format, type});
 
     
-        
-    //console.log(data)
-
-    //const isFetching = false;
-   // const stocksList=[]
-    //const isFetching = false;
-    //const stocksList = ["123", "456", "789"];
-
-    
-   
-    if (!isFetching) {
-    if (currentarray === undefined) {
-        setCurrentarray(stocksList.slice(0, 10))
-    }
-    var chunkedStocks = stocksList.reduce((chunks, stock, index) => { 
-        const chunkIndex = Math.floor(index / 10);
-        if (!chunks[chunkIndex]) {
-            chunks[chunkIndex] = [];
-        }
-        chunks[chunkIndex].push(stock);
-        return chunks;
-    }, []);
-    
-    }
-
-
-    
-
-
-    
-
-    
-
-    const onChange = page => {
-   
-        setCurrentarray(chunkedStocks[page-1])
-
-        
-      };
-        
-    }
 
     /*
     const [stocksList, setStocksList] = useState([
@@ -370,12 +303,7 @@ export default function LSE(state) {
     ])
     */
 
-   
-    
-    
 
-    if (simplified){
-       
 
     //console.log(data)
 
@@ -385,48 +313,36 @@ export default function LSE(state) {
     //const stocksList = ["123", "456", "789"];
     
     
-   
+    const [stocks, setStocks ] = React.useState([])
+    const [currentarray, setCurrentarray] = React.useState();
+    if (!isFetching) {
+    if (currentarray === undefined) {
+        setCurrentarray(stocksList.data.slice(0, 10))
+    }
+    var chunkedStocks = stocksList.data.reduce((chunks, stock, index) => { 
+        const chunkIndex = Math.floor(index / 10);
+        if (!chunks[chunkIndex]) {
+            chunks[chunkIndex] = [];
+        }
+        chunks[chunkIndex].push(stock);
+        return chunks;
+    }, []);
     
     }
+
+
+    
+
+
+
+    
+
     const onChange = page => {
 
         setCurrentarray(chunkedStocks[page-1])
 
         
       };
-
-    const ChangeView  = () => {
-        setSimplified(!simplified)
-    }
-
-    const handleOk = () => {
-        setModalVisible(false);
-        };
-    const handleCancel = () => {
-        setModalVisible(false);
-        };
-
-    const [user] = useAuthState(auth);
-    const uid = user.uid;
-
-
-    const showModal = (symbol) => {
-        setSymbolx(symbol)
-        setModalVisible(true);
-    };
-
-    
-    const xAdd = (e) => {
-       
-        addFavourites(e,uid)
-        
-    }
-
-    
-
-
-
-
 
     useEffect(()=> { 
         //setCryptos(cryptosList?.data?.coins)
@@ -440,46 +356,17 @@ export default function LSE(state) {
 
 
     }, [stocksList, searchTerm])
-  
     
     if (isFetching){
-        return <Spin></Spin>
+        return 'Loading...'
     }
     return (
         <> 
-
-            {simplified ? <NASDAQ2></NASDAQ2> :  <div>
-          
-            <Modal title="" visible={modalVisible} okButtonProps={{ hidden: true }}
-                cancelButtonProps={{ hidden: true }} onOk={handleOk} onCancel={handleCancel}>
-                <Chart2 symbol = {symbolx}></Chart2>
-            </Modal>
-            <div style = {{width:"60%", background:"white", alignItems:"center", textAlign:"center", padding:"10px", margin:"10px", boxShadow:"0px 0px 10px black"}}>
-                <div style = {{width: "50%"}}>
-                 <Chart2 kag symbol = {"NDAQ"}></Chart2>
-                </div>
-                <div style = {{width: "50%", }}>
-                    <h1>
-                    Live NASDAQ price : {data?.price}
-                    </h1>
-                </div>
-           </div>
-            <div>
-
-
-            </div>
-            <h1>NASDAQ STOCKS</h1>
+        <Input placeholder = "Search" onChange = {(e)=> setSearchTerm(e.target.value)}></Input>
+            
             <Row gutters = {[32,32]} className = "crypto-card-container">
-           
-           
                 {currentarray?.map((stock)=> (
                     <Col xs ={24} sm={12} lg={6} className ="crypto-card" key ={stock.id}>
-                        <Button  style = {{width:"50%"}} onClick={()=> xAdd(stock.symbol)} data-tip="Add to Favourites">
-                        <HeartFilled style = {{color: "black"}}/>
-                        </Button>
-                        <Button style = {{width:"50%"}}onClick={()=>showModal(stock.symbol)} data-tip="View Chart">
-                            <LineChartOutlined></LineChartOutlined>
-                        </Button>
                        {/* <Link to = {`'/crypto/${currency.id}'`}> */}
                             <Card 
                             title = { `${stock.name}`}
@@ -487,17 +374,16 @@ export default function LSE(state) {
                                 <p>
                                     Exchange: {(stock.exchange)} <br/>
                                     Symbol: {(stock.symbol)}  <br/>
-                                    Price: {(stock.close)} <br/>
-                                    Change: {(stock.change)}  <br/>
-                                    Currency: {(stock.currency)} <br/>
-                                    High/Low: <br/>{(stock.high)}/{(stock.low)}
+                                    Country: {(stock.country)}  <br/>
+                                    Type: {(stock.type)} <br/>
+                                    Currency: {(stock.currency)}
                                 </p>
                             </Card>
                         
                     </Col>
                 ))}
-            </Row></div>}
-            <Button style = {{width:"100%"}} onClick = {ChangeView}>{simplified ? "View Top 10" : "View All"}</Button>
+            </Row>
+            <Pagination total={500} onChange ={onChange} />
         </>
     )
 }

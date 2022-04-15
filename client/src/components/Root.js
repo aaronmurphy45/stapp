@@ -157,7 +157,7 @@ export default function Root() {
             <button onClick={showLModal} style = {buttonStyle}>Login</button>
             
             
-            <button onClick={showLModal} style = {buttonStyle}>Register</button>
+            <button onClick={showRModal} style = {buttonStyle}>Register</button>
           
             <img style = {imageStyle} src = {stockmar}></img>
             <div style = {imageButtonContainerStyle}>
@@ -185,7 +185,7 @@ export default function Root() {
                         Login Now
                 </Button>
                 <br/> <br/>
-                <h2>or</h2>
+                <div style = {{width: "100%", textAlign:"center"}}>OR</div>
                 <Button style = {bigButtonStyle} type="primary" onClick={showRModal}>
                         Register Now
                 </Button>

@@ -1,9 +1,18 @@
 import React, {useState, useEffect} from 'react'
 import millify from 'millify'
 import { Link } from 'react-router-dom'
-import { Card, Row, Col, Input, Pagination, Button } from 'antd'
+import { Card, Row, Col, Input, Pagination, Button, Spin } from 'antd'
 import { useGetStocksQuery, useGetStockQuoteQuery } from '../services/stockListAPI'
 import NYSE2  from './NYSE2'
+import Chart2 from './Chart2'
+import { useAuthState } from 'react-firebase-hooks/auth'
+import { auth } from '../firebase/firebase-config'
+import { Modal } from 'antd'
+import { LineChartOutlined } from '@ant-design/icons'
+import { HeartFilled } from '@ant-design/icons'
+import { addFavourites } from '../services/favouritesActions' 
+
+
 //import { useGetStocksQuery } from '../services/yahooRecommmend';
 
 export default function NYSE(state) {
@@ -13,25 +22,30 @@ export default function NYSE(state) {
     const [country, setCountry] = React.useState("");
     const [exchange, setExchange] = React.useState("");
     const [searchTerm, setSearchTerm] = useState('');
-    const [symbol, setSymbol] = React.useState("WMT,PFE,XOM,C,BAC,IBM,GS");
+    const [symbol, setSymbol] = React.useState("TWTR,WMT,PFE,XOM,C,BAC,IBM");
     const [stocks, setStocks ] = React.useState([])
     const [currentarray, setCurrentarray] = React.useState();
     const [simplified, setSimplified] = React.useState(false);
+    const [modalVisible, setModalVisible] = React.useState(false);
+    const [symbolx, setSymbolx] = React.useState("") 
+
+
+
     state = {
         current: 3,
       };
     
     const format = "json";
     var array = [];
-    var {data :stocksList, isFetching } = useGetStockQuoteQuery({symbol});
+    var {data :stocksList, isFetching } = useGetStockQuoteQuery(symbol);
     //const {data :stocksList, isFetching } = useGetStocksQuery({country, symbol, format, type});
       
     if (!isFetching){
-        console.log(stocksList)
+ 
         array = Object.values(stocksList)
-        console.log(array)
+  
         stocksList = array
-        console.log(stocksList)
+     
 
     //console.log(data)
 
@@ -351,11 +365,18 @@ export default function NYSE(state) {
     },
     ])
     */
+
+
+    const xAdd = (e) => {
+        
+        addFavourites(e,uid)
+        
+    }
     
     
 
     if (simplified){
-        console.log(stocksList)
+
 
     //console.log(data)
 
@@ -369,15 +390,32 @@ export default function NYSE(state) {
     
     }
     const onChange = page => {
-        console.log(page);
+
         setCurrentarray(chunkedStocks[page-1])
-        console.log(currentarray)
+       
         
       };
 
     const ChangeView  = () => {
         setSimplified(!simplified)
     }
+
+    const handleOk = () => {
+        setModalVisible(false);
+        };
+    const handleCancel = () => {
+        setModalVisible(false);
+        };
+
+    const [user] = useAuthState(auth);
+    const uid = user.uid;
+
+
+    const showModal = (symbol) => {
+        setSymbolx(symbol)
+        setModalVisible(true);
+    };
+
 
 
 
@@ -395,17 +433,26 @@ export default function NYSE(state) {
     }, [stocksList, searchTerm])
     
     if (isFetching){
-        return 'Loading...'
+        return <Spin></Spin>
     }
     return (
         <> 
             <h1>New York Stock Exchange</h1>
             {simplified ? <NYSE2></NYSE2> :  <div>
-            <Input placeholder = "Search" onChange = {(e)=> setSearchTerm(e.target.value)}></Input>
             
+            <Modal title="" visible={modalVisible} okButtonProps={{ hidden: true }}
+                cancelButtonProps={{ hidden: true }} onOk={handleOk} onCancel={handleCancel}>
+                <Chart2 symbol = {symbolx}></Chart2>
+            </Modal>
             <Row gutters = {[32,32]} className = "crypto-card-container">
                 {currentarray?.map((stock)=> (
                     <Col xs ={24} sm={12} lg={6} className ="crypto-card" key ={stock.id}>
+                        <Button  style = {{width:"50%"}} onClick={()=> xAdd(stock.symbol)} data-tip="Add to Favourites">
+                        <HeartFilled style = {{color: "black"}}/>
+                        </Button>
+                        <Button style = {{width:"50%"}}onClick={()=>showModal(stock.symbol)} data-tip="View Chart">
+                            <LineChartOutlined></LineChartOutlined>
+                        </Button>
                        {/* <Link to = {`'/crypto/${currency.id}'`}> */}
                             <Card 
                             title = { `${stock.name}`}

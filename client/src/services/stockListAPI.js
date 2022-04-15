@@ -31,6 +31,15 @@ export const stockListApi = createApi({
         getStockTimeSeries : builder.query({
             query: ({symbol, interval}) => createRequest(`/time_series?symbol=${symbol}&interval=${interval}`)
         }),
+        getStockProfile : builder.query({
+            query: (symbol) => createRequest(`/profile?symbol=${symbol}`)
+        }),
+        getStockPrice : builder.query({
+            query: (symbol) => createRequest(`/price?symbol=${symbol}&format=json&outputsize=30`)
+        }),
+        getCurrencyCon : builder.query({
+            query : (symbol) => createRequest(`currency_conversion?symbol=USD/${symbol}&amount=1`)
+        }),
     })
     /*
     endpoints : (builder) => ({
@@ -54,6 +63,15 @@ export const {
 }= stockListApi
 export const {
     useGetStockTimeSeriesQuery,
+}= stockListApi
+export const {
+    useGetStockProfileQuery,
+}= stockListApi
+export const {
+    useGetStockPriceQuery,
+}= stockListApi
+export const {
+    useGetCurrencyConQuery,
 }= stockListApi
 /*
 export const { 

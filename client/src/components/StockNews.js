@@ -15,7 +15,6 @@ export default function News({simplified}) {
     const {data, isFetching} = useGetCryptosQuery(100);
     const {data : cryptoNews} = useGetCryptoNewsQuery({newsCategory, count : simplified ? 6: 12})
 
-    console.log(cryptoNews)
 
     if (!cryptoNews?.value) return "Loading..."
     return (

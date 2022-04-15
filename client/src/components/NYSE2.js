@@ -3,6 +3,8 @@ import millify from 'millify'
 import { Link } from 'react-router-dom'
 import { Card, Row, Col, Input, Pagination } from 'antd'
 import { useGetStocksQuery, useGetStockQuoteQuery } from '../services/stockListAPI'
+import { Chart } from 'react-chartjs-2'
+import Chart2 from './Chart2'
 //import { useGetStocksQuery } from '../services/yahooRecommmend';
 
 export default function NYSE2(state) {
@@ -303,7 +305,7 @@ export default function NYSE2(state) {
     ])
     */
 
-    console.log(stocksList)
+
 
     //console.log(data)
 
@@ -338,9 +340,9 @@ export default function NYSE2(state) {
     
 
     const onChange = page => {
-        console.log(page);
+
         setCurrentarray(chunkedStocks[page-1])
-        console.log(currentarray)
+        
         
       };
 
@@ -360,10 +362,10 @@ export default function NYSE2(state) {
     if (isFetching){
         return 'Loading...'
     }
+   
     return (
         <> 
         <Input placeholder = "Search" onChange = {(e)=> setSearchTerm(e.target.value)}></Input>
-            
             <Row gutters = {[32,32]} className = "crypto-card-container">
                 {currentarray?.map((stock)=> (
                     <Col xs ={24} sm={12} lg={6} className ="crypto-card" key ={stock.id}>

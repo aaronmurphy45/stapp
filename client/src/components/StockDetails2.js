@@ -1,11 +1,15 @@
 import React, { useEffect, useState} from 'react'
 import HTMLReactParser from 'html-react-parser'
 import { useParams } from 'react-router'
+import { Rate } from 'antd';
 import millify from 'millify'
 import { Col, Row, Typography, Select, Timeline } from 'antd'
 import { MoneyCollectOutlined, DollarCircleOutlined,UpOutlined, FundOutlined, ExclamationCircleOutlined, StopOutlined, TrophyOutlined, CheckOutlined, NumberOutlined, ThunderboltOutlined, UpCircleOutlined, DownOutlined } from '@ant-design/icons';
 import FileUpload from '../machineLearning/FileUpload'
-import { Chart } from '.'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'   
+import { faCircleInfo } from '@fortawesome/free-solid-svg-icons'
+import { Chart, Profile } from '.'
+import ReactTooltip from 'react-tooltip'
 import { useGetCryptoDetailsQuery } from '../services/cryptoAPI'
 import { Option } from 'rc-select'
 import { crypto } from './aJSON/crypto'
@@ -20,6 +24,8 @@ import  {addComment} from '../services/commentsActions'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { auth } from '../firebase/firebase-config'
 
+import { addStockRating} from '../services/ratingService';
+import { dbs } from '../firebase/firebase-config';
 import { Comments } from './Comments'
 
 
@@ -29,7 +35,11 @@ import moment from 'moment';
 import { DislikeOutlined, LikeOutlined, DislikeFilled, LikeFilled } from '@ant-design/icons';
 import { Collapse } from 'antd';
 import { stappsRating} from '../services/stappsRating'
-import { useGetStockQuoteQuery, useGetStockTimeSeriesQuery, useGetStockLogoQuery } from '../services/stockListAPI'
+import { useGetStockQuoteQuery, useGetStockTimeSeriesQuery, useGetStockLogoQuery, useGetStockProfileQuery, useGetStockPriceQuery } from '../services/stockListAPI'
+import { addFavourites } from '../services/favouritesActions'
+import { currencySymbol, currencyX } from './User'
+import { useGetAnnualIncomeQuery, useGetAnnualBalanceSheetQuery, useGetAnnualCashFlowQuery, useGetQuarterlyBalanceSheetQuery, useGetQuarterlyCashFlowQuery, useGetQuarterlyIncomeQuery } from '../services/businessDetails'
+
 const { Panel } = Collapse;
 
 
@@ -45,15 +55,16 @@ export default function StockDetails2() {
     
 
     const {stockId} = useParams();
-
+   
     const [user] = useAuthState(auth);
 
-    
-    
-    console.log(stockId)
-    PageDecider(stockId);
 
-    addRecent(stockId)
+
+    
+    
+
+   
+    const [stockRating, setStockRating] = useState(0);
     const [likes, setLikes] = useState(0);
     const [dislikes, setDislikes] = useState(0);
     const [action, setAction] = useState(null);
@@ -61,17 +72,59 @@ export default function StockDetails2() {
     const [timePeriod, setTimePeriod] = useState('7d')
     const [comment, setComment] = useState('');
     const [interval, setInterval] = useState("1h");
+    const [userRating , setUserRating] = useState(0);
     
-    const {data, isFetching} = useGetStockQuoteQuery(stockId);
+  
+    if (stockId==undefined){
+        //console.log("stockId is undefined")
+        // move to home page
+        alert("stockId is undefined")
+        window.location.href = "/"
 
+    }
+    const {data, isFetching, error} = useGetStockQuoteQuery(stockId);
+    PageDecider(stockId);
 
-    const {data: data2, isFetching: isFetching2} = useGetStockTimeSeriesQuery({symbol: stockId, interval: interval});
+    addRecent(stockId)
+
+    const {data: data2, isFetching: isFetching2, error2} = useGetStockTimeSeriesQuery({symbol: stockId, interval: interval});
     //const {data2, isFetching2} = useGetStockTimeSeriesQuery({symbol: stockId, interval: interval});
     const {data: data3  , isFetching3} = useGetStockLogoQuery(stockId);
+
+    const { data: dataX, isFetching : isFetchingX , error3} = useGetAnnualIncomeQuery(stockId);
+    //const { data: dataY, isFetching : isFetchingY } = useGetAnnualBalanceSheetQuery(stockId);
+    //const { data: dataZ, isFetching : isFetchingZ } = useGetAnnualCashFlowQuery(stockId);
+    const { data: dataA, isFetching : isFetchingA , error4} = useGetQuarterlyIncomeQuery(stockId);
+    //const { data: dataB, isFetching : isFetchingB } = useGetQuarterlyBalanceSheetQuery(stockId);
+    //const { data: dataC, isFetching : isFetchingC } = useGetQuarterlyCashFlowQuery(stockId);
     
+    const dataY = []
+    const dataZ = []
+   
+
+    const {data: data4, isFetching: isFetching4, error5} = useGetStockPriceQuery(stockId);
+
+    if (data4) {
+       
+    }
        
     var arrayObject3 =[];
 
+    if (error){
+        return <div>Error</div>
+    }
+    if (error2){
+        return <div>Error</div>
+    }
+    if (error3){
+        return <div>Error</div>
+    }
+    if (error4){
+        return <div>Error</div>
+    }
+    if (error5){
+        return <div>Error</div>
+    }
     
     var logo;
    
@@ -79,16 +132,17 @@ export default function StockDetails2() {
     const close = []
 
     if (data3){
-        console.log(data3)
+       
         logo = data3.url
 
     }
 
-    console.log(data)
+
+    
   
    
     if (data2){
-        console.log(data2)
+    
         data2?.values?.forEach(element => {
             
 
@@ -96,7 +150,7 @@ export default function StockDetails2() {
 
             
             // convert date to YYYY-MM-DD
-            console.log(element.datetime)
+            
             var date = new Date(element.datetime)
 
             //GET TIME NOW
@@ -108,12 +162,10 @@ export default function StockDetails2() {
             close.push(element.close)
         });
        
-        console.log(timestamp)
-        console.log(close)
+      
 
     }
-    
-    console.log(data)
+
     if (data) {
         var stockDetails = data;
         
@@ -121,7 +173,13 @@ export default function StockDetails2() {
     else{
         return <div>Loading...</div>
     }
+    
+    if (dataX) {
 
+        var stockDetailsX = []//dataX?.results[0];
+
+    }
+  
    
    
 
@@ -155,8 +213,7 @@ export default function StockDetails2() {
         setDislikes(1);
         setAction('disliked');
       };
-
-
+      
 
     const actions = [
         <Tooltip key="comment-basic-like" title="Like">
@@ -218,7 +275,7 @@ export default function StockDetails2() {
 
     // dictionary to array 
    
-  
+    
     
 
     const showModal = () => {
@@ -243,7 +300,6 @@ export default function StockDetails2() {
         float: 'left',
     }
     function callback(key) {
-        console.log(key);
       }
     const textStyle = {
         width: '40%',
@@ -251,6 +307,28 @@ export default function StockDetails2() {
         margin: 'auto',
         float: 'right',
     }
+    const indicatorContainerStyle = {
+        marginTop: '20px',
+        marginLeft: '10px',
+        width: '58%',
+        height: '60%',
+        alignItems: 'in-line',
+        marginBottom: '20px',
+        borderRadius: '5px',
+        backgroundColor: '#fafafa',
+        padding: '0px 10px 10px 10px',
+        boxShadow: '0px 0px 5px #000000',
+        
+    
+
+    }
+    const indicatorStyle = {
+        width: '100%',
+        height: '20%',
+        margin: '3px',
+    }
+
+
 
     const headerStyle = {
         color: 'rgb(67,145,255)',
@@ -259,69 +337,328 @@ export default function StockDetails2() {
     }
     const stockInformationStyle = {
         backgroundColor: 'white',
-        width: "40%",
+        width: "35%",
         height: "100%",
-        margin : "10px",
         padding: "10px",
-        float : "right"
+        float : "right",
+        borderRadius: "10px",
+        boxShadow: '0px 0px 5px #000000',
+        marginRight: "50px",
     }
+    const borderDesign = {
+        border : '3px solid rgb(67,145,255)',
+        marginBottom : '100px',
+        paddingBottom : '50px',
+        borderRadius : '10px',
+        boxShadow: '0px 0px 5px #000000',
+    }
+    const stockValueTextStyle = {
+        float: "left",
+        width: "50%",
+    }
+    const stockValueStyle = {
+        float: "right",
+        width: "50%",
+    }
+
+
 
     var stappsr;
 
-    const stappsrating = stappsRating({eps: stockDetails.epsCurrentYear, ptb: stockDetails.priceToBook})
+
+   
+    const stappsrating = stappsRating({x:dataX,y: dataY,z:dataZ ,price: data4?.price});
     if (stappsrating < 25) {
-        stappsr = <UpCircleOutlined style = {{color: '#52c41a'}}/>
+        stappsr = <DownOutlined style = {{color: '#f5222d'}}/>
     }else if (stappsrating < 50) {
         stappsr = <UpCircleOutlined style = {{color: '#faad14'}}/>
     } else {
         stappsr = <DownOutlined style = {{color: '#f5222d'}}/>
     }
+    
+    const pe = data4?.price / dataX?.results[0]?.basicEps;
+    const eps = dataX?.results[0]?.basicEps;
+    const grossMargin = dataX?.results[0]?.grossProfit/dataX?.results[0]?.totalRevenue;
+    const netMargin = ((dataX?.results[0]?.grossProfit-dataX?.results[0]?.totalExpenses)/dataX?.results[0]?.totalRevenue);
+    const peg = (pe / (dataX?.results[0]?.basicEps-dataX?.results[1]?.basicEps))
+    const pb = dataX?.results[0]?.price/dataX?.results[0]?.bookValue;
+
+
+    
+    const yearlyRevTrend = () => {
+        var count = 0;
+        for (let i = 1; i < dataX?.results?.length; i++) {
+            if (dataX?.results[i]?.totalRevenue > dataX?.results[i-1]?.totalRevenue) {
+                count += 1;
+            }
+        }
+        if (count > dataX?.results?.length / 2) {
+            return <UpOutlined style = {{color: '#52c41a'}}/>
+        }
+        else {
+            return <DownOutlined style = {{color: '#f5222d'}}/>
+        }
+    }
+
+    const quarterlyRevTrend = () => {
+        var count = 0;
+        for (let i = 1; i < dataA?.results?.length; i++) {
+            if (dataA?.results[i]?.totalRevenue > dataA?.results[i-1]?.totalRevenue) {
+                count += 1;
+            }
+        }
+
+        if (count > dataA?.results?.length / 2) {
+            return <UpOutlined style = {{color: '#52c41a'}}/>
+        }
+        else {
+            return <DownOutlined style = {{color: '#f5222d'}}/>
+        }
+    }
+
+
+const getUserStockRating = (stock) => {
+    const email = user?.email;
+    const db = dbs.ref(`Ratings/-N-5tjvQZKnNf7ZVTHkR/${stock}`)
+    db.once('value', function(snapshot) {
+        if (snapshot.val() == undefined || snapshot.val() == null) {
+            return 0
+        }
+        else {
+            var ratings = snapshot.val()
+            var nratings = Object.values(ratings)
+            var xratings = Object.keys(ratings)
+            nratings.forEach(element => {
+                if (element.email == email) {
+                    setUserRating(element.rating)
+                    
+                }
+
+
+            });
+
+        
+        }
+    })
+}
 
 
 
 
+
+    const getStockRating = (stock) => {
+        const db = dbs.ref(`Ratings/-N-5tjvQZKnNf7ZVTHkR/${stock}`)
+        db.once('value', function(snapshot) {
+            var ratings = snapshot.val()
+            var sum = 0
+            var count = 0
+            for (var key in ratings) {
+                sum += ratings[key].rating
+                count += 1
+            }
+        
+            var avg = sum/count
+            setStockRating(avg)
+        })
+    }
+
+    getStockRating(stockId)
+    getUserStockRating(stockId)
+
+    const rateThisStockContainerStyle = {
+        marginTop: '50px',
+        width: '100%',
+        height: '100%',
+        margin: 'auto',
+        backgroundColor: 'white',
+        borderRadius: '10px',
+        boxShadow: '0px 0px 5px #000000',
+    }
+    const rateThisStockTextStyle = {
+        fontSize: '1.5em',
+        margin: 'auto',
+        marginTop: '20px',
+        marginBottom: '20px',
+        textAlign: 'center',
+    }
+    const collapseStyle = {
+        margin: 'auto',
+        marginTop: '20px',
+        boxShadow: '0px 0px 5px #000000',
+        borderRadius: '10px',
+        backgroundColor: 'white',
+        width: '100%',
+        height: '100%',
+        alignItems: 'center',
+    }
+    const rateThisStockStarStyle = {
+        width: '100%',
+        height: '100%',
+        margin: 'auto',
+        marginTop: '20px',
+        marginBottom: '20px',
+        textAlign: 'center',
+
+    }
+    const rateThisStockSmallText = {
+        fontSize: '0.8em',
+        margin: 'auto',
+        marginTop: '20px',
+        marginBottom: '20px',
+        textAlign: 'center',
+    }
+    
+    const postCommentStyle = {
+        margin: 'auto',
+        boxShadow: '0px 0px 5px #000000',
+        alignItems: 'center',
+        backgroundColor: 'white',
+        textAlign: 'center',
+    }
+    const commentStyle = {
+        margin: 'auto',
+        boxShadow: '0px 0px 5px #000000',
+        alignItems: 'center',
+        
+        width: '100%',
+        overflowX: 'hidden',
+        backgroundColor: 'white',
+        textAlign: 'center',
+    }
+
+
+    const topRatingStyle = {
+        width: '30%',
+        height: '10%',
+        margin: 'auto',
+        
+    }
+    const headingStyle = {
+        margin: 'auto',
+        width: "40%",
+        float:"right",
+        height: '40%',
+        textAlign: 'center',
+        marginTop: '50px',
+    }
+
+
+    const onediv = {
+        float: 'left',
+        width: '30%',
+        
+    }
+    const twodiv = {
+        float: 'left',
+        width: '70%',
+
+    }
+
+        if (error){
+            return <div>Error: {error}</div>
+        }
+
+    
    
     return (
         <div>
+            <ReactTooltip />
         <div style = {containerStyle}>
             <Col className = "coin-detail-container">
-                <Col className = "coin-heading-container">
+                <Col className = "coin-heading-container" style = {borderDesign}>
                     <div style = {chartStyle}>
-                    <Select defaultValue="1h" style={{ width: 120 }} onChange={onChange}>
+                    <Select style = {{marginLeft : "10px"}} defaultValue="1h" style={{ width: 120 }} onChange={onChange}>
                         {time.map(item => (
                             <Option value={item}>{item}</Option>
                         ))}
                     </Select>
+                    <div style = {{boxShadow: '0px 0px 5px #000000', marginTop: '10px', marginBottom: '10px', marginLeft: '10px', marginRight: '10px', backgroundColor: 'white', borderRadius: '10px'}}>
                     <Chart symbol = {stockDetails.symbol} timestamp = {timestamp} close = {close} />
                     </div>
-               
+                   
+                    </div>
+                    
+                    <div style = {headingStyle}>
+                    <div style = {onediv}>
+                    <img src= {logo} style = {{width: '100px', height: '100px', borderRadius:"100%", border: '1px black solid'}}/>
+                    </div>
+                    <div style = {twodiv}>
                     <Title level={2} className = "coin-name">
-                        {stockDetails.name} ({stockDetails.symbol}) {stockDetails.ask} {stockDetails.percent_change}%
-                        {(stockDetails.percent_change < 0) ? <DownOutlined style = {{color: '#f5222d'}}/> : <UpCircleOutlined style = {{color: '#52c41a'}}/>}
-                        <img src= {logo} style = {{width: '50px', height: '50px'}}/>
+                        {stockDetails.name} ({stockDetails.symbol}) 
+                        <br/>
+                        {currencySymbol}{data4?.price*currencyX}
+                        <br/>
+                         {stockDetails.percent_change}%
+                        {   (stockDetails.percent_change < 0) ?  <DownOutlined style = {{color: '#f5222d'}}/> : <UpCircleOutlined style = {{color: '#52c41a'}}/>   }
+                        
                     </Title>
+                    </div>
+                    
+                   
+                    </div>
+                     <div style = {stockInformationStyle}>
+                        
+                        <p> Stock Details <br/>
+                        <div style = {stockValueTextStyle}>Open:</div>
+                        <div style = {stockValueStyle}>{currencySymbol}{stockDetails?.open*currencyX}</div>
+                        <div style = {stockValueTextStyle}>High:</div>
+                        <div style = {stockValueStyle}>{currencySymbol}{stockDetails?.high*currencyX}</div>
+                        <div style = {stockValueTextStyle}>Low:</div>
+                        <div style = {stockValueStyle}>{currencySymbol}{stockDetails?.low*currencyX}</div>
+                        <div style = {stockValueTextStyle}>Close:</div>
+                        <div style = {stockValueStyle}>{currencySymbol}{stockDetails?.close*currencyX}</div>
+                        </p>
+                        <div style = {stockValueTextStyle}>Volume:</div>
+                        <div style = {stockValueStyle}>{stockDetails?.volume}</div>
+                        <div style ={stockValueTextStyle}>Exchange:</div>
+                        <div style = {stockValueStyle}>{stockDetails?.exchange}</div>
+                        <div style = {stockValueTextStyle}>Market Cap:</div>
+                        <div style = {stockValueStyle}>{currencySymbol}{stockDetails?.market_cap}</div>
+                        <div style = {stockValueTextStyle}>PE:</div>
+                        <div style = {stockValueStyle}>{pe.toFixed(2)}</div>
+                        <div style = {stockValueTextStyle}>EPS:</div>
+                        <div style = {stockValueStyle}>{eps}</div>
+                        <div style = {stockValueTextStyle}>Gross Margin:</div>
+                        <div style = {stockValueStyle}>{grossMargin?.toFixed(2)}</div>
+                        <div style = {stockValueTextStyle}>Net Margin:</div>
+                        <div style = {stockValueStyle}>{netMargin?.toFixed(2)}</div>
+                        <div style = {stockValueTextStyle}>PEG:</div>
+                        <div style = {stockValueStyle}>{peg?.toFixed(2)}</div>
+                        <div style = {stockValueTextStyle}>PB:</div>
+                        <div style = {stockValueStyle}>{pb?.toFixed(2)}</div>
 
-                    <p> Stock Details <br/>
-                        Open: {stockDetails.open} <br/>
-                        Close: {stockDetails.close} <br/>
-                        Change :  {stockDetails.change} <br/>
-                        Market : {stockDetails.exchange}</p>
-                        High: {stockDetails.high} <br/>
-                        Low: {stockDetails.low} <br/>
-                        Volume: {stockDetails.volume} <br/>
-                        Previous Close: {stockDetails.previous_close} <br/>
-
+                    </div>
 
                     
+
+                    
+                   
+                        
+                        
+
+
                     <br/><br/> <br/><br/>
                     <br/>
-
-                </Col>
-                <Button type="primary" onClick={showModal}>
+                    <div style = {indicatorContainerStyle}>
+                        <div style = {indicatorStyle}>
+                    <Button type="primary" onClick={showModal} >
                         Open Predictor
                     </Button>
-                    <div>Stapp's Stock Rating: {stappsr}</div>
-                    <Collapse style = {{marginTop:"5%"}} onChange={callback}>
+                    <Button onClick= {()=>addFavourites(stockDetails.symbol, user.uid)}>
+                        Add to Favourites
+                    </Button>
+                    </div>
+                    <div style = {indicatorStyle}>Stapp's Stock Rating: {stappsr} <FontAwesomeIcon icon={faCircleInfo} data-tip = "Stapps Rating of a stock is based on the price to earnings ratio the earnings per share and recent growth"/></div>
+                    <div style = {indicatorStyle}>Yearly Revenue Trend: {yearlyRevTrend()} <FontAwesomeIcon icon={faCircleInfo} data-tip = "Yearly Revenue Trend displays an arrow depending on whether the stocks yearly reveune has increased in the last 5 years"/></div>
+                    <div style = {indicatorStyle}>Quarterly Revenue Trend: {quarterlyRevTrend()} <FontAwesomeIcon icon={faCircleInfo} data-tip = "Yearly Revenue Trend displays an arrow depending on whether the stocks yearly reveune has increased in the last 5 quarters"/></div>
+                    <div style = {indicatorStyle}>Stapp's Users Rating : <Rate disabled value={stockRating} style = {topRatingStyle}></Rate> </div>
+                    </div>
+
+                </Col>
+                
+                   
+
+                    <Collapse onChange={callback} style = {collapseStyle}>
                     <Panel header="Stock History" key="1" style = {{ maxHeight: "20%" , overflowX :"scroll"}}>
                         <Select defaultValue="1h" style={{ width: 120 }} onChange={onChange}>
                             {time.map(item => (
@@ -344,19 +681,28 @@ export default function StockDetails2() {
                         </Timeline>
                     </Panel>
                     <Panel header="52 Week Information" key="2">
-                        <p>Low : {stockDetails.fifty_two_week.low}</p>
-                        <p>High : {stockDetails.fifty_two_week.high}</p>
-                        <p>Low Change : {stockDetails.fifty_two_week.low_change}</p>
-                        <p>High Change : {stockDetails.fifty_two_week.high_change}</p>
-                        <p>Low Change Percent : { stockDetails.fifty_two_week.low_chaqnge_percent}</p>
-                        <p>High Change Percent : {stockDetails.fifty_two_week.high_change_percent}</p>
-                        <p>Range : {stockDetails.fifty_two_week.range}</p>
+                        <p>Low : {stockDetails?.fifty_two_week.low}</p>
+                        <p>High : {stockDetails?.fifty_two_week.high}</p>
+                        <p>Low Change : {stockDetails?.fifty_two_week.low_change}</p>
+                        <p>High Change : {stockDetails?.fifty_two_week.high_change}</p>
+                        <p>Low Change Percent : { stockDetails?.fifty_two_week.low_chaqnge_percent}</p>
+                        <p>High Change Percent : {stockDetails?.fifty_two_week.high_change_percent}</p>
+                        <p>Range : {stockDetails?.fifty_two_week.range}</p>
                     </Panel>
-                    <Panel header="This is panel header 3" key="3">
-                    <p>infor3</p>
+                    <Panel header="Company Information" key="3">
+                    <Profile stockid = {stockDetails?.symbol}/>
+                    </Panel>
+                    <Panel header="Financial Information" key="4">
+                        <p>Earnings Per Share : {stockDetailsX?.basicEps}</p>
+                        <p>Dividend Yield : {stockDetailsX?.dividendYield}</p>
+                        <p> Gross Profit : {stockDetailsX?.grossProfit}</p>
+                        <p>Cost of Revenue : {stockDetailsX?.costOfRevenue}</p>
+                        <p>Operating Income : {stockDetailsX?.operatingIncome}</p>
+                        <p>Net Income : {stockDetailsX?.netIncome}</p>
+                        <p>Earnings Before Taxes : {stockDetailsX?.ebit}</p>
                     </Panel>
                 </Collapse>
-                <Modal title="Stock Price Predictor" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+                <Modal title="Stock Price Predictor" visible={isModalVisible} footer={null} onOk={handleOk} onCancel={handleCancel}>
                     <FileUpload symbol = {stockDetails.symbol }></FileUpload>
                 </Modal>
                 {/*
@@ -373,23 +719,30 @@ export default function StockDetails2() {
                 */}
                 
             </Col>
-            <div style = {{marginTop: "5%"}}>
+            <div style = {rateThisStockContainerStyle}>
+                <h2 style = {rateThisStockTextStyle}>Rate this stock</h2>
+                <Rate style = {rateThisStockStarStyle}value={userRating} onChange = {(e)=> addStockRating({email:user.email, stock: stockDetails.symbol,rating: e })}></Rate>
+                <p style = {rateThisStockSmallText}>Stapp Users rate this stock <b>{stockRating}</b></p>
+            </div>
+           <div style = {postCommentStyle}>
                 <h2>Post A Comment</h2>
-                <TextArea rows={4} placeholder="maxLength is 120" maxLength={120} onChange = {
+                <TextArea rows={4} placeholder="Post a comment or report about this stock"  onChange = {
                     (e)=>{
                         setComment(e.target.value)
                     }
                 } />
                 <Button type="primary" onClick = {()=>addComment(comment, user.email, stockDetails.symbol)}>Post</Button>
             </div>
-            <div style = {{marginTop: "5%"}}>
+            <br/>
+            <br/>
+            <div style = {commentStyle}>
                 <h2>Comments</h2>
                 <Comments stockid = {stockId}></Comments>
             </div>
     
             
         </div>
-        <SidePanelNews stockname = {stockDetails.displayName}></SidePanelNews>
+        <SidePanelNews xxx stockname = {stockDetails.name}></SidePanelNews>
         </div>
     )
 }
